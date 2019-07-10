@@ -1,0 +1,126 @@
+<!doctype html>
+<html>
+
+<head>
+    <title></title>
+
+</head>
+
+<body>
+    <main>
+        <input type="file" id="files" name="files[]" webkitdirectory mozdirectory msdirectory odirectory directory
+            multiple />
+        <output id="list"></output>
+    </main>
+    <script>
+        var socket; // websocket
+
+
+        /* websockets */
+        function socketSend(data) {
+            if (socket == null) {
+                return
+            }
+            if (socket.readyState != 1) {
+                return
+            }
+            jsonData = JSON.stringify(data);
+            socket.send(jsonData);
+            if (jsonData.length > 100) {
+                jsonData = jsonData.substring(0, 99) + "...";
+            }
+            console.log("[debug] ws-> " + jsonData)
+        }
+
+        const socketMessageListener = (event) => {
+            var data = JSON.parse(event.data);
+            if (!('type' in data && 'message' in data)) {
+                console.log(`[warn] got bad data ${event.data}`);
+                return
+            }
+            console.log(`[debug] ${data.type} ${data.message}`)
+            if (data.type == "get") {
+                var foundFile = false
+                for (i = 0; i < files.length; i++) {
+                    if (files[i].webkitRelativePath == data.message) {
+                        var reader = new FileReader();
+                        reader.onload = function (theFile) {
+                            socketSend({
+                                type: "get",
+                                message: reader.result,
+                                success: true,
+                            })
+                            console.log(`[info] ${data.message} 200`);
+                        };
+                        reader.readAsDataURL(files[i]);
+                        foundFile = true
+                        break
+                    }
+                }
+                if (foundFile == false) {
+                    socketSend({
+                        type: "get",
+                        message: "not found",
+                        success: false,
+                    })
+                    console.log(`[info] ${data.message} 404`);
+                }
+            } else if (data.type == "message") {
+                console.log(`[info] ${data.message}`);
+            } else {
+                console.log(`[debug] unknown`);
+            }
+        };
+        const socketOpenListener = (event) => {
+            console.log('[debug] connected');
+        };
+
+        const socketCloseListener = (event) => {
+            if (socket) {
+                console.log('[debug] disconnected');
+            }
+            var url = window.origin.replace("http", "ws") + '/ws';
+            try {
+                socket = new WebSocket(url);
+                socket.addEventListener('open', socketOpenListener);
+                socket.addEventListener('message', socketMessageListener);
+                socket.addEventListener('close', socketCloseListener);
+            } catch (err) {
+                console.log("[debug] no connection available")
+            }
+        };
+
+
+        var files;
+
+        function handleFileSelect(evt) {
+            files = evt.target.files; // FileList object
+
+            // files is a FileList of File objects. List some properties.
+            var output = [];
+            for (var i = 0, f; f = files[i]; i++) {
+                output.push('<li><strong>', escape(f.webkitRelativePath), '</strong> (', f.type || 'n/a', ') - ',
+                    f.size, ' bytes, last modified: ',
+                    f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a',
+                    '</li>');
+            }
+            document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
+
+            var reader = new FileReader();
+            reader.onload = function (theFile) {
+                console.log(reader);
+                domain = files[0].webkitRelativePath.split("/")[0];
+                socketSend({
+                    "type": "domain",
+                    "message": domain,
+                })
+            };
+            reader.readAsDataURL(files[0]);
+        }
+
+        document.getElementById('files').addEventListener('change', handleFileSelect, false);
+        socketCloseListener();
+    </script>
+</body>
+
+</html>
