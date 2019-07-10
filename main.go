@@ -2,12 +2,12 @@ package main
 
 import (
 	"encoding/json"
-	"flag"
 	"fmt"
 	"io/ioutil"
-	"os"
 	"net/http"
+	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"sync"
 	"text/template"
@@ -16,6 +16,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/h2non/filetype"
 	log "github.com/schollz/logger"
+	"github.com/urfave/cli"
 	"github.com/vincent-petithory/dataurl"
 )
 
@@ -51,7 +52,7 @@ func NewWebsocket(ws *websocket.Conn) *WebsocketConn {
 func (ws *WebsocketConn) Send(p Payload) (err error) {
 	ws.Lock()
 	defer ws.Unlock()
-	log.Tracef("sending %+v",p)
+	log.Tracef("sending %+v", p)
 	err = ws.ws.WriteJSON(p)
 	return
 }
@@ -60,50 +61,129 @@ func (ws *WebsocketConn) Receive() (p Payload, err error) {
 	ws.Lock()
 	defer ws.Unlock()
 	err = ws.ws.ReadJSON(&p)
-	log.Tracef("recv %+v",p)
+	log.Tracef("recv %+v", p)
 	return
 }
 
-func main() {
-	var debug, flagServer bool
-	var flagPort, flagPublicURL string
-	flag.StringVar(&flagPort, "port", "8001", "port")
-	flag.StringVar(&flagPublicURL, "url", "", "public url to use")
-	flag.BoolVar(&debug, "debug", false, "debug mode")
-	flag.BoolVar(&flagServer, "serve", false, "serve files")
-	flag.Parse()
+var Version string
 
-	if debug {
+func main() {
+	runtime.GOMAXPROCS(runtime.NumCPU())
+
+	app := cli.NewApp()
+	app.Name = "hostyoself"
+	if Version == "" {
+		Version = "v0.0.0"
+	}
+	app.Version = Version
+	app.Compiled = time.Now()
+	app.Usage = "host your files using websockets from the command line or a browser"
+	app.UsageText = "use to transfer files or host a impromptu website"
+	app.Commands = []cli.Command{
+		{
+			Name:        "relay",
+			Usage:       "start a relay",
+			Description: "relay is used to transit files",
+			Flags: []cli.Flag{
+				cli.StringFlag{Name: "url, u", Value: "localhost", Usage: "public URL to use"},
+				cli.StringFlag{Name: "port", Value: "8010", Usage: "ports of the local relay"},
+			},
+			HelpName: "hostyoself relay",
+			Action: func(c *cli.Context) error {
+				return relay(c)
+			},
+		},
+		{
+			Name:        "host",
+			Description: "host files from your computer",
+			HelpName:    "hostyoself relay",
+			Flags: []cli.Flag{
+				cli.StringFlag{Name: "url, u", Value: "https://hostyoself.com", Usage: "URL of relay to connect"},
+			},
+			Action: func(c *cli.Context) error {
+				return host(c)
+			},
+		},
+	}
+	app.Flags = []cli.Flag{
+		cli.BoolFlag{Name: "debug", Usage: "increase verbosity"},
+	}
+	app.EnableBashCompletion = true
+	app.HideHelp = false
+	app.HideVersion = false
+	app.BashComplete = func(c *cli.Context) {
+		fmt.Fprintf(c.App.Writer, "host\nrelay")
+	}
+
+	err := app.Run(os.Args)
+	if err != nil {
+		log.Debug(err)
+	}
+	// var debug, flagServer bool
+	// var flagPort, flagPublicURL string
+	// flag.StringVar(&flagPort, "port", "8001", "port")
+	// flag.StringVar(&flagPublicURL, "url", "", "public url to use")
+	// flag.BoolVar(&debug, "debug", false, "debug mode")
+	// flag.BoolVar(&flagServer, "serve", false, "serve files")
+	// flag.Parse()
+
+	// if debug {
+	// 	log.SetLevel("debug")
+	// } else {
+	// 	log.SetLevel("info")
+	// }
+
+	// if flagServer {
+	// 	log.SetLevel("trace")
+	// 	client := &Client{
+	// 		WebsocketURL: "wss://omni.schollz.com/ws",
+	// 	}
+	// 	client.Run()
+
+	// 	os.Exit(1)
+	// }
+
+	// if flagPublicURL == "" {
+	// 	flagPublicURL = "localhost:" + flagPort
+	// }
+	// if !strings.HasPrefix(flagPublicURL, "http") {
+	// 	flagPublicURL = "http://" + flagPublicURL
+	// }
+
+	// s := &server{
+	// 	port:      flagPort,
+	// 	conn:      make(map[string][]*Connection),
+	// 	publicURL: flagPublicURL,
+	// }
+
+	// s.serve()
+}
+
+func host(c *cli.Context) (err error) {
+	return
+}
+
+func relay(c *cli.Context) (err error) {
+	if c.GlobalBool("debug") {
 		log.SetLevel("debug")
 	} else {
 		log.SetLevel("info")
 	}
 
-
-	if flagServer {
-		log.SetLevel("trace")
-		client := &Client{
-			WebsocketURL: "wss://omni.schollz.com/ws",
-		}
-		client.Run()
-
-		os.Exit(1)
-	}
-
-	if flagPublicURL == "" {
-		flagPublicURL = "localhost:" + flagPort
+	flagPublicURL := c.String("url")
+	if flagPublicURL == "localhost" {
+		flagPublicURL += ":" + c.String("port")
 	}
 	if !strings.HasPrefix(flagPublicURL, "http") {
 		flagPublicURL = "http://" + flagPublicURL
 	}
 
 	s := &server{
-		port:      flagPort,
+		port:      c.String("port"),
 		conn:      make(map[string][]*Connection),
 		publicURL: flagPublicURL,
 	}
-
-	s.serve()
+	return s.serve()
 }
 
 func (s *server) serve() (err error) {
@@ -155,7 +235,7 @@ Disallow: /`))
 		domain := strings.Split(r.URL.Path[1:], "/")[0]
 		// check to make sure it has domain prepended
 		piecesOfReferer := strings.Split(r.Referer(), "/")
-		if len(piecesOfReferer) > 4 && strings.HasPrefix(r.Referer(),s.publicURL) {
+		if len(piecesOfReferer) > 4 && strings.HasPrefix(r.Referer(), s.publicURL) {
 			domain = piecesOfReferer[3]
 		}
 
