@@ -1,10 +1,10 @@
-# userve
+# omniserve
 
 onetwoseven.site: 127 is the last network number in a class A network with a subnet mask of 255.0.0.0. 127.0.0.1 is the first assignable address in the subnet. 
 
 ## FAQ
 
-**How do I get started?** You will need to setup port forwarding, a dynamic DNS, name registration, MySQL, PHP, Apache and take a online course in Javascript. 
+**How do I start web hosting?** You will need to setup port forwarding, a dynamic DNS, name registration, MySQL, PHP, Apache and take a online course in Javascript. 
 
 Just *kidding*! You don't need any of that crap. Just drag and drop a folder, or select a file. That's literally it. Now you can host a website from your laptop or your phone or your smartwatch or your toaster.
 
@@ -16,7 +16,7 @@ Just *kidding*! You don't need any of that crap. Just drag and drop a folder, or
 
 **Should I use this to host a website?** Dear god yes.
 
-**Does this use AI or blockchain or decentralization or something like that?** Sure, why not. Your site can optionally be decentralized and hosted from other browsers that open your site. Later on it will use AI to predict all the web traffic so your site can have 100% uptime.
+**Does this use AI or blockchain or decentralization or something like that?** Sure, why not. 
 
 **What inspired this?** [websocketd](https://github.com/joewalnes/websocketd) and [beaker browser](https://beakerbrowser.com/) which do something like this.
 
