@@ -193,7 +193,6 @@ Disallow: /`))
 				}
 			}
 		}
-		log.Debugf("%s content-type: '%s'", pathToFile, contentType)
 		w.Header().Set("Content-Type", contentType)
 		w.Write(dataURL.Data)
 		return
