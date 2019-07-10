@@ -9,168 +9,233 @@
     <meta name="theme-color" content="#ffffff">
     <link rel="stylesheet" href="https://share.schollz.com/static/dropzone.css">
     <link rel="stylesheet" href="https://share.schollz.com/static/style.css">
-    <title>Share a file</title>
+    <title>omniserver</title>
+    <style>
+    .main {
+        padding-top: 20px;
+    }
 
+    .list {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .list>div {
+        padding: 0.4em;
+    }
+
+    body {
+        text-decoration-skip: ink;
+    }
+
+    .hide {
+        display: none;
+    }
+
+    textarea {
+        width: 100%;
+        border: none;
+        resize: none;
+        height: 20em;
+        border: 1px solid #ccc;
+        background-color: #f5f5f5;
+        padding: 1em;
+        font-size: 0.9em;
+    }
+    </style>
 </head>
 
 <body>
     <main>
+        <h1 align="center"><a href="/">omniserver</a> </h1>
+        <p id="errormessage" class="error"></p>
+        <p>Serve your files from your browser at this domain: <strong>{{.PublicURL}}</strong>.</p>
+        <details>
+            <summary>Click here for FAQ.</summary>
+        </details>
         <div id="filesBox" class="dropzone">
-            <div class="dz-message" data-dz-message><span>Drop or click here to share a folder.<br>
-                    <p><small>Max file size: 100 MB</small></p>
+            <div class="dz-message" data-dz-message><span>Drop or folder or click here to share a file.<br>
+                    <p><small></small></p>
                 </span></div>
         </div>
+        <div id="console" class="dropzone hide">
+            <div id="consoleHeader"></div>
+            <details>
+                <summary>Files served</summary>
+                <div id="fileList"></div>
+            </details>
+            <h3>Console:</h3>
+            <textarea id="consoleText" readonly></textarea>
+        </div>
+        <footer>
+            <!--             <p align="center" style="margin-bottom:0">
+                <img src="/static/logo47.png" style="max-width: 100px">
+            </p>
+ -->
+            <p align="center">Made by <a href="https://github.com/schollz">schollz</a>, source available on <a href="https://github.com/schollz/omniserve">Github</a>. <a href="/static/terms.html">Terms of Use</a>.</p>
+        </footer>
     </main>
-
-
     <script src="https://share.schollz.com/static/dropzone.js"></script>
     <script>
-        var files = [];
-        var isConnected = false;
+    var files = [];
+    var isConnected = false;
 
-        function humanFileSize(bytes, si) {
-            var thresh = si ? 1000 : 1024;
-            if (Math.abs(bytes) < thresh) {
-                return bytes + ' B';
-            }
-            var units = si ? ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'] : ['KiB', 'MiB', 'GiB', 'TiB', 'PiB',
-                'EiB', 'ZiB', 'YiB'
-            ];
-            var u = -1;
-            do {
-                bytes /= thresh;
-                ++u;
-            } while (Math.abs(bytes) >= thresh && u < units.length - 1);
-            return bytes.toFixed(1) + ' ' + units[u];
+    function consoleLog(s) {
+        console.log(s);
+        if (typeof s === 'object') {
+            s = JSON.stringify(s);
         }
 
-        var Name = "";
-        var filesize = 0;
-
-        (function (Dropzone) {
-            Dropzone.autoDiscover = false;
-
-            let drop = new Dropzone('div#filesBox', {
-                maxFiles: 1000,
-                url: '/',
-                method: 'post',
-                createImageThumbnails: false,
-                previewTemplate: "<div id='preview' class='.dropzone-previews'></div>",
-                autoProcessQueue: false,
-            });
-
-            drop.on('addedfile', function (file) {
-                files.push(file);
-                console.log(file);
-                domain = files[0].webkitRelativePath.split("/")[0];
-                if (domain == "") {
-                    domain = files[0].name;
-                }
-                if (!(isConnected)) {
-                    isConnected = true;
-                    socketSend({
-                        "type": "domain",
-                        "message": domain,
-                    })
-                }
-                html = `<p>Your domain: /${domain}</p>
-                
-                <ul>`
-                for (i = 0; i < files.length; i++) {
-                    console.log(files[i]);
-                    var urlToFile = files[i].name;
-
-                    if ('fullPath' in files[i]) {
-                        urlToFile = files[i].fullPath;
-                    }
-                    html = html +
-                        `<li><a href="/${urlToFile}" target="_blank">/${urlToFile}</a></li>`
-                }
-                html = html + `</ul>`;
-                document.getElementById("preview").innerHTML = html;
-            })
-
-        })(Dropzone);
-
-        var socket; // websocket
-
-
-        /* websockets */
-        function socketSend(data) {
-            if (socket == null) {
-                return
-            }
-            if (socket.readyState != 1) {
-                return
-            }
-            jsonData = JSON.stringify(data);
-            socket.send(jsonData);
-            if (jsonData.length > 100) {
-                jsonData = jsonData.substring(0, 99) + "...";
-            }
-            console.log("[debug] ws-> " + jsonData)
+        if (!(s.startsWith("[debug]"))) {
+            document.getElementById("consoleText").value = document.getElementById("consoleText").value + s + "\n";
+            document.getElementById("consoleText").scrollTop = document.getElementById("consoleText").scrollHeight;
         }
+    }
 
-        const socketMessageListener = (event) => {
-            var data = JSON.parse(event.data);
-            if (!('type' in data && 'message' in data)) {
-                console.log(`[warn] got bad data ${event.data}`);
-                return
+    function humanFileSize(bytes, si) {
+        var thresh = si ? 1000 : 1024;
+        if (Math.abs(bytes) < thresh) {
+            return bytes + ' B';
+        }
+        var units = si ? ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'] : ['KiB', 'MiB', 'GiB', 'TiB', 'PiB',
+            'EiB', 'ZiB', 'YiB'
+        ];
+        var u = -1;
+        do {
+            bytes /= thresh;
+            ++u;
+        } while (Math.abs(bytes) >= thresh && u < units.length - 1);
+        return bytes.toFixed(1) + ' ' + units[u];
+    }
+
+    var Name = "";
+    var filesize = 0;
+
+    (function(Dropzone) {
+        Dropzone.autoDiscover = false;
+
+        let drop = new Dropzone('div#filesBox', {
+            maxFiles: 1000,
+            url: '/',
+            method: 'post',
+            createImageThumbnails: false,
+            previewTemplate: "<div id='preview' class='.dropzone-previews'></div>",
+            autoProcessQueue: false,
+        });
+
+        drop.on('addedfile', function(file) {
+            files.push(file);
+            domain = files[0].webkitRelativePath.split("/")[0];
+            if (domain == "") {
+                domain = files[0].name;
             }
-            console.log(`[debug] ${data.type} ${data.message}`)
-            if (data.type == "get") {
-                var foundFile = false
-                for (i = 0; i < files.length; i++) {
-                    if (files[i].webkitRelativePath == data.message || files[i].name == data.message) {
-                        var reader = new FileReader();
-                        reader.onload = function (theFile) {
-                            socketSend({
-                                type: "get",
-                                message: reader.result,
-                                success: true,
-                            })
-                            console.log(`[info] ${data.message} 200`);
-                        };
-                        reader.readAsDataURL(files[i]);
-                        foundFile = true
-                        break
-                    }
+            if (!(isConnected)) {
+                isConnected = true;
+                socketSend({
+                    "type": "domain",
+                    "message": domain,
+                })
+            }
+            document.getElementById("consoleHeader").innerHTML = `<p>Your files are served at: <strong><a href="/${domain}" target="_blank">{{.PublicURL}}/${domain}</a></strong></p>`;
+            html = `<ul>`
+            for (i = 0; i < files.length; i++) {
+                var urlToFile = files[i].name;
+
+                if ('fullPath' in files[i]) {
+                    urlToFile = files[i].fullPath;
                 }
-                if (foundFile == false) {
-                    socketSend({
-                        type: "get",
-                        message: "not found",
-                        success: false,
-                    })
-                    console.log(`[info] ${data.message} 404`);
+                html = html +
+                    `<li><a href="/${urlToFile}" target="_blank">/${urlToFile}</a></li>`
+            }
+            html = html + `</ul>`;
+            document.getElementById("fileList").innerHTML = html;
+            document.getElementById("filesBox").classList.add("hide");
+            document.getElementById("console").classList.remove("hide");
+
+        })
+
+    })(Dropzone);
+
+    var socket; // websocket
+
+
+    /* websockets */
+    function socketSend(data) {
+        if (socket == null) {
+            return
+        }
+        if (socket.readyState != 1) {
+            return
+        }
+        jsonData = JSON.stringify(data);
+        socket.send(jsonData);
+        if (jsonData.length > 100) {
+            jsonData = jsonData.substring(0, 99) + "...";
+        }
+        consoleLog("[debug] ws-> " + jsonData)
+    }
+
+    const socketMessageListener = (event) => {
+        var data = JSON.parse(event.data);
+        if (!('type' in data && 'message' in data)) {
+            consoleLog(`[warn] got bad data ${event.data}`);
+            return
+        }
+        console.log(data)
+        consoleLog(`[debug] ${data.message}`)
+        if (data.type == "get") {
+            var foundFile = false
+            for (i = 0; i < files.length; i++) {
+                if (files[i].webkitRelativePath == data.message || files[i].name == data.message) {
+                    var reader = new FileReader();
+                    reader.onload = function(theFile) {
+                        socketSend({
+                            type: "get",
+                            message: reader.result,
+                            success: true,
+                        })
+                        consoleLog(`${data.ip} [${(new Date()).toUTCString()}] /${data.message} 200 ${files[i].size}`);
+                    };
+                    reader.readAsDataURL(files[i]);
+                    foundFile = true
+                    break
                 }
-            } else if (data.type == "message") {
-                console.log(`[info] ${data.message}`);
-            } else {
-                console.log(`[debug] unknown`);
             }
-        };
-        const socketOpenListener = (event) => {
-            console.log('[debug] connected');
-        };
-
-        const socketCloseListener = (event) => {
-            if (socket) {
-                console.log('[debug] disconnected');
+            if (foundFile == false) {
+                socketSend({
+                    type: "get",
+                    message: "not found",
+                    success: false,
+                })
+                consoleLog(`[info] ${data.message} 404`);
             }
-            var url = window.origin.replace("http", "ws") + '/ws';
-            try {
-                socket = new WebSocket(url);
-                socket.addEventListener('open', socketOpenListener);
-                socket.addEventListener('message', socketMessageListener);
-                socket.addEventListener('close', socketCloseListener);
-            } catch (err) {
-                console.log("[debug] no connection available")
-            }
-        };
+        } else if (data.type == "message") {
+            consoleLog(`[info] ${data.message}`);
+        } else {
+            consoleLog(`[debug] unknown`);
+        }
+    };
+    const socketOpenListener = (event) => {
+        consoleLog('[info] connected');
+    };
+
+    const socketCloseListener = (event) => {
+        if (socket) {
+            consoleLog('[info] disconnected');
+        }
+        var url = window.origin.replace("http", "ws") + '/ws';
+        try {
+            socket = new WebSocket(url);
+            socket.addEventListener('open', socketOpenListener);
+            socket.addEventListener('message', socketMessageListener);
+            socket.addEventListener('close', socketCloseListener);
+        } catch (err) {
+            consoleLog("[info] no connection available")
+        }
+    };
 
 
-        socketCloseListener();
+    socketCloseListener();
     </script>
 </body>
 

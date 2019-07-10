@@ -1,4 +1,4 @@
-module github.com/schollz/userve
+module github.com/schollz/omniserve
 
 go 1.12
 

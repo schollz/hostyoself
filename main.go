@@ -6,19 +6,21 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"path/filepath"
 	"strings"
 	"sync"
 	"text/template"
 	"time"
 
 	"github.com/gorilla/websocket"
+	"github.com/h2non/filetype"
 	log "github.com/schollz/logger"
 	"github.com/vincent-petithory/dataurl"
-	"github.com/h2non/filetype"
 )
 
 type server struct {
-	port string
+	publicURL string
+	port      string
 
 	// connections stored as map of domain -> connections
 	conn map[string][]*Connection
@@ -61,8 +63,9 @@ func (ws *WebsocketConn) Receive() (p Payload, err error) {
 
 func main() {
 	var debug bool
-	var flagPort string
+	var flagPort, flagPublicURL string
 	flag.StringVar(&flagPort, "port", "8001", "port")
+	flag.StringVar(&flagPublicURL, "url", "", "public url to use")
 	flag.BoolVar(&debug, "debug", false, "debug mode")
 	flag.Parse()
 
@@ -72,11 +75,19 @@ func main() {
 		log.SetLevel("info")
 	}
 
-	s := new(server)
-	s.Lock()
-	s.port = flagPort
-	s.conn = make(map[string][]*Connection)
-	s.Unlock()
+	if flagPublicURL == "" {
+		flagPublicURL = "localhost:" + flagPort
+	}
+	if !strings.HasPrefix(flagPublicURL, "http") {
+		flagPublicURL = "http://" + flagPublicURL
+	}
+
+	s := &server{
+		port:      flagPort,
+		conn:      make(map[string][]*Connection),
+		publicURL: flagPublicURL,
+	}
+
 	s.serve()
 }
 
@@ -97,7 +108,7 @@ func (s *server) handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *server) handle(w http.ResponseWriter, r *http.Request) (err error) {
-
+	log.Debugf("URL: %s, Referer: %s", r.URL.Path, r.Referer())
 	// very special paths
 	if r.URL.Path == "/robots.txt" {
 		// special path
@@ -117,14 +128,47 @@ Disallow: /`))
 			return err
 		}
 		type view struct {
-			Title string
-			HTML  string
+			PublicURL string
+			Title     string
+			HTML      string
 		}
-		return t.Execute(w, view{})
+		return t.Execute(w, view{PublicURL: s.publicURL})
 	} else {
 		log.Debugf("attempting to find %s", r.URL.Path)
+
+		pathToFile := r.URL.Path[1:]
+		domain := strings.Split(r.URL.Path[1:], "/")[0]
+		// check to make sure it has domain prepended
+		piecesOfReferer := strings.Split(r.Referer(), "/")
+		if len(piecesOfReferer) > 4 {
+			domain = piecesOfReferer[3]
+		}
+
+		// prefix the domain if it doesn't exist
+		if !strings.HasPrefix(pathToFile, domain) {
+			pathToFile = domain + "/" + pathToFile
+			http.Redirect(w, r, "/"+pathToFile, 302)
+			return
+		}
+
+		// add index.html if it doesn't exist
+		if filepath.Ext(pathToFile) == "" {
+			if string(pathToFile[len(pathToFile)-1]) != "/" {
+				pathToFile += "/"
+			}
+			pathToFile += "index.html"
+			http.Redirect(w, r, "/"+pathToFile, 302)
+			return
+		}
+
+		var ipAddress string
+		ipAddress, err = GetClientIPHelper(r)
+		if err != nil {
+			log.Debugf("could not determine ip: %s", err.Error())
+		}
+
 		var data string
-		data, err = s.get(r.URL.Path[1:])
+		data, err = s.get(pathToFile, ipAddress)
 		if err != nil {
 			return
 		}
@@ -134,10 +178,22 @@ Disallow: /`))
 			return
 		}
 		contentType := dataURL.MediaType.ContentType()
-		if contentType == "application/octet-stream" {
-			mimeType := filetype.GetType(r.URL.Path[1:])
+		if contentType == "application/octet-stream" || contentType == "" {
+			pathToFileExt := filepath.Ext(pathToFile)
+			mimeType := filetype.GetType(pathToFileExt)
 			contentType = mimeType.MIME.Value
+			if contentType == "" {
+				switch pathToFileExt {
+				case ".css":
+					contentType = "text/css"
+				case ".js":
+					contentType = "text/javascript"
+				case ".html":
+					contentType = "text/html"
+				}
+			}
 		}
+		log.Debugf("%s content-type: '%s'", pathToFile, contentType)
 		w.Header().Set("Content-Type", contentType)
 		w.Write(dataURL.Data)
 		return
@@ -155,9 +211,10 @@ var wsupgrader = websocket.Upgrader{
 
 type Payload struct {
 	// message meta
-	Type    string `json:"type"`
-	Success bool   `json:"success"`
-	Message string `json:"message"`
+	Type      string `json:"type"`
+	Success   bool   `json:"success"`
+	Message   string `json:"message"`
+	IPAddress string `json:"ip"`
 }
 
 func (p Payload) String() string {
@@ -219,7 +276,7 @@ func (s *server) handleWebsocket(w http.ResponseWriter, r *http.Request) (err er
 	return
 }
 
-func (s *server) get(filePath string) (payload string, err error) {
+func (s *server) get(filePath, ipAddress string) (payload string, err error) {
 	log.Debugf("requesting %s", filePath)
 	domain := strings.Split(filePath, "/")[0]
 
@@ -239,8 +296,9 @@ func (s *server) get(filePath string) (payload string, err error) {
 		var p Payload
 		p, err = func() (p Payload, err error) {
 			err = conn.ws.Send(Payload{
-				Type:    "get",
-				Message: filePath,
+				Type:      "get",
+				Message:   filePath,
+				IPAddress: ipAddress,
 			})
 			if err != nil {
 				return
@@ -253,7 +311,6 @@ func (s *server) get(filePath string) (payload string, err error) {
 			s.DumpConnection(domain, conn.ID)
 			continue
 		}
-		log.Debugf("recv: %+v", p)
 		if p.Type == "get" {
 			payload = p.Message
 			if !p.Success {
@@ -261,6 +318,10 @@ func (s *server) get(filePath string) (payload string, err error) {
 			}
 			return
 		}
+		if len(p.Message) > 10 {
+			p.Message = p.Message[:10] + "..."
+		}
+		log.Debugf("recv: %+v", p)
 		err = fmt.Errorf("invalid response")
 		break
 	}
