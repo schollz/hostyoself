@@ -1,4 +1,4 @@
-module github.com/schollz/omniserve
+module github.com/schollz/hostyoself
 
 go 1.12
 
