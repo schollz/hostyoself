@@ -6,13 +6,15 @@ onetwoseven.site: 127 is the last network number in a class A network with a sub
 
 **How do I get started?** You will need to setup port forwarding, a dynamic DNS, name registration, MySQL, PHP, Apache and take a online course in Javascript. 
 
-Just *kidding*! You don't need any of that crap. Just pick your domain name and click "load files" to upload your files. That's literally it. If it has a browser you can host a website, so now you can host a website from your laptop or your phone or your smartwatch or your toaster.
+Just *kidding*! You don't need any of that crap. Just drag and drop a folder, or select a file. That's literally it. Now you can host a website from your laptop or your phone or your smartwatch or your toaster.
 
 **How is this possible?** When the server you point at gets a request for a webpage, the server turns back and asks *you* for that content and will use what you provide for the original request.
 
 **Won't my website disappear when I close my browser?** Yep! There is a command-line tool that doesn't require a browser so it can run in the background if you need that. But yes, if your computer turns off then your site is down. Welcome to the joys of hosting a site on the internet.
 
-**Should I use this?** Dear god yes.
+**Won't I have to reload my browser if I change a file?** Yep! Welcome to the joys of Javascript.
+
+**Should I use this to host a website?** Dear god yes.
 
 **Does this use AI or blockchain or decentralization or something like that?** Sure, why not. Your site can optionally be decentralized and hosted from other browsers that open your site. Later on it will use AI to predict all the web traffic so your site can have 100% uptime.
 
