@@ -140,7 +140,7 @@ Disallow: /`))
 		domain := strings.Split(r.URL.Path[1:], "/")[0]
 		// check to make sure it has domain prepended
 		piecesOfReferer := strings.Split(r.Referer(), "/")
-		if len(piecesOfReferer) > 4 {
+		if len(piecesOfReferer) > 4 && strings.HasPrefix(r.Referer(),s.publicURL) {
 			domain = piecesOfReferer[3]
 		}
 
