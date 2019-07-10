@@ -2,17 +2,96 @@
 <html>
 
 <head>
-    <title></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="stylesheet" href="https://share.schollz.com/static/dropzone.css">
+    <link rel="stylesheet" href="https://share.schollz.com/static/style.css">
+    <title>Share a file</title>
 
 </head>
 
 <body>
     <main>
-        <input type="file" id="files" name="files[]" webkitdirectory mozdirectory msdirectory odirectory directory
-            multiple />
-        <output id="list"></output>
+        <div id="filesBox" class="dropzone">
+            <div class="dz-message" data-dz-message><span>Drop or click here to share a folder.<br>
+                    <p><small>Max file size: 100 MB</small></p>
+                </span></div>
+        </div>
     </main>
+
+
+    <script src="https://share.schollz.com/static/dropzone.js"></script>
     <script>
+        var files = [];
+        var isConnected = false;
+
+        function humanFileSize(bytes, si) {
+            var thresh = si ? 1000 : 1024;
+            if (Math.abs(bytes) < thresh) {
+                return bytes + ' B';
+            }
+            var units = si ? ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'] : ['KiB', 'MiB', 'GiB', 'TiB', 'PiB',
+                'EiB', 'ZiB', 'YiB'
+            ];
+            var u = -1;
+            do {
+                bytes /= thresh;
+                ++u;
+            } while (Math.abs(bytes) >= thresh && u < units.length - 1);
+            return bytes.toFixed(1) + ' ' + units[u];
+        }
+
+        var Name = "";
+        var filesize = 0;
+
+        (function (Dropzone) {
+            Dropzone.autoDiscover = false;
+
+            let drop = new Dropzone('div#filesBox', {
+                maxFiles: 1000,
+                url: '/',
+                method: 'post',
+                createImageThumbnails: false,
+                previewTemplate: "<div id='preview' class='.dropzone-previews'></div>",
+                autoProcessQueue: false,
+            });
+
+            drop.on('addedfile', function (file) {
+                files.push(file);
+                console.log(file);
+                domain = files[0].webkitRelativePath.split("/")[0];
+                if (domain == "") {
+                    domain = files[0].name;
+                }
+                if (!(isConnected)) {
+                    isConnected = true;
+                    socketSend({
+                        "type": "domain",
+                        "message": domain,
+                    })
+                }
+                html = `<p>Your domain: /${domain}</p>
+                
+                <ul>`
+                for (i = 0; i < files.length; i++) {
+                    console.log(files[i]);
+                    var urlToFile = files[i].name;
+
+                    if ('fullPath' in files[i]) {
+                        urlToFile = files[i].fullPath;
+                    }
+                    html = html +
+                        `<li><a href="/${urlToFile}" target="_blank">/${urlToFile}</a></li>`
+                }
+                html = html + `</ul>`;
+                document.getElementById("preview").innerHTML = html;
+            })
+
+        })(Dropzone);
+
         var socket; // websocket
 
 
@@ -42,7 +121,7 @@
             if (data.type == "get") {
                 var foundFile = false
                 for (i = 0; i < files.length; i++) {
-                    if (files[i].webkitRelativePath == data.message) {
+                    if (files[i].webkitRelativePath == data.message || files[i].name == data.message) {
                         var reader = new FileReader();
                         reader.onload = function (theFile) {
                             socketSend({
@@ -91,34 +170,6 @@
         };
 
 
-        var files;
-
-        function handleFileSelect(evt) {
-            files = evt.target.files; // FileList object
-
-            // files is a FileList of File objects. List some properties.
-            var output = [];
-            for (var i = 0, f; f = files[i]; i++) {
-                output.push('<li><strong>', escape(f.webkitRelativePath), '</strong> (', f.type || 'n/a', ') - ',
-                    f.size, ' bytes, last modified: ',
-                    f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a',
-                    '</li>');
-            }
-            document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
-
-            var reader = new FileReader();
-            reader.onload = function (theFile) {
-                console.log(reader);
-                domain = files[0].webkitRelativePath.split("/")[0];
-                socketSend({
-                    "type": "domain",
-                    "message": domain,
-                })
-            };
-            reader.readAsDataURL(files[0]);
-        }
-
-        document.getElementById('files').addEventListener('change', handleFileSelect, false);
         socketCloseListener();
     </script>
 </body>
