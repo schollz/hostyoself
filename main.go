@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"os"
 	"net/http"
 	"path/filepath"
 	"strings"
@@ -50,6 +51,7 @@ func NewWebsocket(ws *websocket.Conn) *WebsocketConn {
 func (ws *WebsocketConn) Send(p Payload) (err error) {
 	ws.Lock()
 	defer ws.Unlock()
+	log.Tracef("sending %+v",p)
 	err = ws.ws.WriteJSON(p)
 	return
 }
@@ -58,21 +60,34 @@ func (ws *WebsocketConn) Receive() (p Payload, err error) {
 	ws.Lock()
 	defer ws.Unlock()
 	err = ws.ws.ReadJSON(&p)
+	log.Tracef("recv %+v",p)
 	return
 }
 
 func main() {
-	var debug bool
+	var debug, flagServer bool
 	var flagPort, flagPublicURL string
 	flag.StringVar(&flagPort, "port", "8001", "port")
 	flag.StringVar(&flagPublicURL, "url", "", "public url to use")
 	flag.BoolVar(&debug, "debug", false, "debug mode")
+	flag.BoolVar(&flagServer, "serve", false, "serve files")
 	flag.Parse()
 
 	if debug {
 		log.SetLevel("debug")
 	} else {
 		log.SetLevel("info")
+	}
+
+
+	if flagServer {
+		log.SetLevel("trace")
+		client := &Client{
+			WebsocketURL: "wss://omni.schollz.com/ws",
+		}
+		client.Run()
+
+		os.Exit(1)
 	}
 
 	if flagPublicURL == "" {
