@@ -69,7 +69,7 @@ func (s *server) handle(w http.ResponseWriter, r *http.Request) (err error) {
 	if r.URL.Path == "/robots.txt" {
 		// special path
 		w.Write([]byte(`User-agent: * 
-Disallow: /`))
+Disallow:`))
 	} else if r.URL.Path == "/ws" {
 		return s.handleWebsocket(w, r)
 	} else if r.URL.Path == "/favicon.ico" {
