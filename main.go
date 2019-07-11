@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/schollz/hostyoself/pkg/client"
 	"github.com/schollz/hostyoself/pkg/server"
 	log "github.com/schollz/logger"
 	"github.com/urfave/cli"
@@ -47,10 +48,14 @@ func main() {
 		},
 		{
 			Name:        "host",
+			Usage:       "host files from your computer",
 			Description: "host files from your computer",
 			HelpName:    "hostyoself relay",
 			Flags: []cli.Flag{
 				cli.StringFlag{Name: "url, u", Value: "https://hostyoself.com", Usage: "URL of relay to connect"},
+				cli.StringFlag{Name: "domain, d", Value: "", Usage: "domain to use (default is random)"},
+				cli.StringFlag{Name: "key, k", Value: "", Usage: "key value to use (default is random)"},
+				cli.StringFlag{Name: "folder, f", Value: ".", Usage: "folder to serve files"},
 			},
 			Action: func(c *cli.Context) error {
 				return host(c)
@@ -80,7 +85,11 @@ func host(c *cli.Context) (err error) {
 		log.SetLevel("info")
 	}
 
-	return
+	cl, err := client.New(c.String("domain"), c.String("key"), c.String("url"), c.String("folder"))
+	if err != nil {
+		return
+	}
+	return cl.Run()
 }
 
 func relay(c *cli.Context) (err error) {

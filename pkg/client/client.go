@@ -1,22 +1,73 @@
 package client
 
-import "github.com/gorilla/websocket"
+import (
+	"io/ioutil"
+	"os"
+	"path/filepath"
+	"strings"
+	"sync"
+
+	"github.com/schollz/hostyoself/pkg/namesgenerator"
+	"github.com/schollz/hostyoself/pkg/utils"
+	"github.com/schollz/hostyoself/pkg/wsconn"
+
+	"github.com/fsnotify/fsnotify"
+	"github.com/gorilla/websocket"
+	log "github.com/schollz/logger"
+	"github.com/vincent-petithory/dataurl"
+)
 
 type client struct {
 	WebsocketURL string
 	Domain       string
 	Key          string
+	Folder       string
+	fileList     map[string]struct{}
+	sync.Mutex
 }
 
-func New(domain, key, webocketURL string) *client {
-	return &client{
+// New returns a new client
+func New(domain, key, webocketURL, folder string) (c *client, err error) {
+	if strings.HasPrefix(webocketURL, "http") {
+		webocketURL = strings.Replace(webocketURL, "http", "ws", 1)
+	}
+	webocketURL += "/ws"
+
+	if domain == "" {
+		domain = namesgenerator.GetRandomName()
+	}
+
+	if key == "" {
+		key = utils.RandStringBytesMaskImpr(6)
+	}
+
+	if folder == "" {
+		folder = "."
+	}
+
+	if _, err = os.Stat(folder); os.IsNotExist(err) {
+		log.Error(err)
+		return
+	}
+
+	log.Infof("connecting to %s", webocketURL)
+	log.Infof("using domain '%s'", domain)
+	log.Infof("using key '%s'", key)
+	log.Infof("watching folder '%s'", folder)
+
+	c = &client{
 		WebsocketURL: webocketURL,
 		Domain:       domain,
 		Key:          key,
+		Folder:       folder,
+		fileList:     make(map[string]struct{}),
 	}
+	return
 }
 
-func (c *Client) Run() (err error) {
+func (c *client) Run() (err error) {
+	go c.watchFileSystem()
+
 	log.Debugf("dialing %s", c.WebsocketURL)
 	wsDial, _, err := websocket.DefaultDialer.Dial(c.WebsocketURL, nil)
 	if err != nil {
@@ -25,9 +76,9 @@ func (c *Client) Run() (err error) {
 	}
 	defer wsDial.Close()
 
-	ws := NewWebsocket(wsDial)
+	ws := wsconn.New(wsDial)
 
-	err = ws.Send(Payload{
+	err = ws.Send(wsconn.Payload{
 		Type:    "domain",
 		Message: c.Domain,
 		Key:     c.Key,
@@ -38,7 +89,7 @@ func (c *Client) Run() (err error) {
 	}
 
 	for {
-		var p Payload
+		var p wsconn.Payload
 		p, err = ws.Receive()
 		if err != nil {
 			log.Debug(err)
@@ -46,7 +97,97 @@ func (c *Client) Run() (err error) {
 		}
 		log.Debugf("recv: %+v", p)
 
+		if p.Type == "get" {
+			haveFile := false
+			c.Lock()
+			_, haveFile = c.fileList[p.Message]
+			c.Unlock()
+			if !haveFile {
+				err = ws.Send(wsconn.Payload{
+					Type:    "get",
+					Success: false,
+					Message: "no such file",
+					Key:     c.Key,
+				})
+			} else {
+				var b []byte
+				b, err = ioutil.ReadFile(p.Message)
+				if err != nil {
+					log.Error(err)
+					return
+				}
+				err = ws.Send(wsconn.Payload{
+					Type:    "get",
+					Success: true,
+					Message: dataurl.EncodeBytes(b),
+					Key:     c.Key,
+				})
+			}
+		}
+		if err != nil {
+			log.Debug(err)
+			return
+		}
+
 	}
 
+	return
+}
+
+func (c *client) watchFileSystem() (err error) {
+	// creates a new file watcher
+	watcher, err := fsnotify.NewWatcher()
+	if err != nil {
+		return err
+	}
+	defer watcher.Close()
+
+	done := make(chan bool)
+	go func() {
+		for {
+			select {
+			case event, ok := <-watcher.Events:
+				if !ok {
+					return
+				}
+				log.Debugf("event: [%s] [%s]", event.Name, strings.ToLower(event.Op.String()))
+				c.Lock()
+				switch strings.ToLower(event.Op.String()) {
+				case "create":
+					c.fileList[filepath.ToSlash(event.Name)] = struct{}{}
+				case "remove":
+					delete(c.fileList, filepath.ToSlash(event.Name))
+				}
+				log.Debugf("map: %+v", c.fileList)
+				c.Unlock()
+			case err, ok := <-watcher.Errors:
+				if !ok {
+					return
+				}
+				log.Error("error:", err)
+			}
+		}
+	}()
+
+	filepath.Walk(c.Folder, func(path string, fi os.FileInfo, err error) error {
+		if err != nil {
+			log.Errorf("problem with '%s': %s", path, err.Error())
+			return err
+		}
+		if strings.HasPrefix(path, ".git") {
+			return nil
+		}
+		if fi.Mode().IsDir() {
+			log.Debugf("watching %s", path)
+			return watcher.Add(path)
+		} else {
+			c.Lock()
+			c.fileList[filepath.ToSlash(path)] = struct{}{}
+			c.Unlock()
+		}
+		return nil
+	})
+
+	<-done
 	return
 }
