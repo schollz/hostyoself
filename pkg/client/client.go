@@ -1,6 +1,7 @@
 package client
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
@@ -58,6 +59,9 @@ func New(domain, key, webocketURL, folder string) (c *client, err error) {
 	log.Infof("using domain '%s'", domain)
 	log.Infof("using key '%s'", key)
 	log.Infof("watching folder '%s'", folder)
+	publicURL := strings.Replace(webocketURL, "ws", "http", 1)
+	publicURL = strings.Replace(publicURL, "/ws", "/"+domain+"/", 1)
+	fmt.Printf("\n\t%s\n\n", publicURL)
 
 	c = &client{
 		WebsocketURL: webocketURL,

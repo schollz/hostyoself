@@ -12,9 +12,36 @@ alt="Version"></a> </p>
 <p align="center">A hosting service for absolute minimalists. Try it at <a href="https://hostyoself.com">hostyoself.com</a>.</p>
 
 
+## Host from the browser
+
+Open [hostyoself.com](https://hostyoself.com) and drag and drop a folder, or select a file. Your browser will host the files!
+
+## Host from the command line
+
+You can host files directly from the terminal!
+
+```
+$ hostyoself host
+https://hostyoself.com/confidentcat/
+```
+
+Now if you have a file in your folder `README.md` you can access it with the public URL `https://hostyoself.com/confidentcat/README.md`, directly from your computer!
+
+
+## Run your own relay
+
+Want to run your own relay? Its easy. 
+
+```
+$ hostyoself  relay --url https://yoururl
+```
+
+## FAQ
+
+
 **How do I start web hosting?** You will need to setup port forwarding, a dynamic DNS, name registration, MySQL, PHP, Apache and take a online course in Javascript. 
 
-Just *kidding*! You don't need any of that crap. Just drag and drop a folder, or select a file. That's literally it. Now you can host a website from your laptop or your phone or your smartwatch or your toaster.
+Just *kidding*! You don't need any of that crap. Just goto [hostyoself.com](https://hostyoself.com) drag and drop a folder, or select a file. That's literally it. Now you can host a website from your laptop or your phone or your smartwatch or your toaster.
 
 **How is this possible?** When the server you point at gets a request for a webpage, the server turns back and asks *you* for that content and will use what you provide for the original request.
 
@@ -33,3 +60,23 @@ Just *kidding*! You don't need any of that crap. Just drag and drop a folder, or
 **What inspired this?** [websocketd](https://github.com/joewalnes/websocketd) which shows the magic of websockets and [beaker browser](https://beakerbrowser.com/) which shows the magic of browser hosting.
 
 **What's the point of this?** You can host a website! You can share a file! Anything you want, directly from your browser!
+
+## Develop
+
+To install from source:
+
+```
+$ git clone https://github.com/schollz/hostyoself
+$ cd offlinenotepad
+$ go generate -v -x
+$ go build -v
+```
+
+
+## Inspiration
+
+[ngrok](https://ngrok.com/), [localhost.run](http://localhost.run/), [inlets.dev](https://github.com/alexellis/inlets), Parks and Recreation.
+
+## License 
+
+MIT
