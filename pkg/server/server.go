@@ -13,6 +13,7 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/h2non/filetype"
+	"github.com/schollz/hostyoself/pkg/namesgenerator"
 	"github.com/schollz/hostyoself/pkg/utils"
 	"github.com/schollz/hostyoself/pkg/wsconn"
 	log "github.com/schollz/logger"
@@ -84,11 +85,15 @@ Disallow: /`))
 			return err
 		}
 		type view struct {
-			PublicURL string
-			Title     string
-			HTML      string
+			PublicURL       template.JS
+			GeneratedDomain string
+			GeneratedKey    string
 		}
-		return t.Execute(w, view{PublicURL: s.publicURL})
+		return t.Execute(w, view{
+			PublicURL:       template.JS(s.publicURL),
+			GeneratedDomain: namesgenerator.GetRandomName(),
+			GeneratedKey:    utils.RandStringBytesMaskImpr(6),
+		})
 	} else {
 		// get IP address
 		var ipAddress string
@@ -107,25 +112,41 @@ Disallow: /`))
 		if len(piecesOfReferer) > 4 && strings.HasPrefix(r.Referer(), s.publicURL) {
 			domain = piecesOfReferer[3]
 		}
+		// clean domain
+		domain = strings.Replace(strings.ToLower(strings.TrimSpace(domain)), " ", "-", -1)
+
 		// prefix the domain if it doesn't exist
 		if !strings.HasPrefix(pathToFile, domain) {
 			pathToFile = domain + "/" + pathToFile
+			if filepath.Ext(pathToFile) == "" {
+				pathToFile += "/"
+			}
 			http.Redirect(w, r, "/"+pathToFile, 302)
 			return
 		}
 		// trim prefix to get the path to file
-		pathToFile = strings.TrimPrefix(pathToFile, domain+"/")
+		pathToFile = strings.TrimPrefix(pathToFile, domain)
+		if len(pathToFile) == 0 || string(pathToFile[0]) == "/" {
+			if len(pathToFile) <= 1 {
+				pathToFile = "index.html"
+			} else {
+				pathToFile = pathToFile[1:]
+			}
+		}
+		log.Debugf("pathToFile: %s", pathToFile)
 
 		// send GET request to websockets
 		var data string
 		data, err = s.get(domain, pathToFile, ipAddress)
 		if err != nil {
 			// try index.html if it doesn't exist
-			if string(pathToFile[len(pathToFile)-1]) != "/" {
-				pathToFile += "/"
+			if filepath.Ext(pathToFile) == "" {
+				if string(pathToFile[len(pathToFile)-1]) != "/" {
+					pathToFile += "/"
+				}
+				pathToFile += "index.html"
+				data, err = s.get(domain, pathToFile, ipAddress)
 			}
-			pathToFile += "index.html"
-			data, err = s.get(domain, pathToFile, ipAddress)
 			if err != nil {
 				return
 			}
@@ -198,7 +219,7 @@ func (s *server) handleWebsocket(w http.ResponseWriter, r *http.Request) (err er
 		return
 	}
 
-	domain := strings.TrimSpace(p.Message)
+	domain := strings.Replace(strings.ToLower(strings.TrimSpace(p.Message)), " ", "-", -1)
 
 	// create domain if it doesn't exist
 	s.Lock()
@@ -217,8 +238,8 @@ func (s *server) handleWebsocket(w http.ResponseWriter, r *http.Request) (err er
 	s.Unlock()
 
 	err = ws.Send(wsconn.Payload{
-		Type:    "message",
-		Message: "connected",
+		Type:    "domain",
+		Message: domain,
 		Success: true,
 	})
 	return
@@ -261,10 +282,7 @@ func (s *server) get(domain, filePath, ipAddress string) (payload string, err er
 			s.dumpConnection(domain, connections[i].ID)
 			continue
 		}
-		if len(p.Message) > 10 {
-			p.Message = p.Message[:10] + "..."
-		}
-		log.Debugf("recv: %+v", p)
+		log.Tracef("recv: %+v", p)
 		if p.Type == "get" && p.Key == key {
 			payload = p.Message
 			if !p.Success {
