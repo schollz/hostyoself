@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"html/template"
 	"math/rand"
-	"io/ioutil"
 	"net/http"
 	"path/filepath"
 	"strings"
@@ -78,7 +77,7 @@ Disallow: /`))
 		return
 	} else if strings.HasPrefix(r.URL.Path, "/static") {
 		var b []byte
-		b, err = ioutil.ReadFile()(r.URL.Path[1:])
+		b, err = Asset(r.URL.Path[1:])
 		if err != nil {
 			http.Error(w, "file not found", 404)
 			return
@@ -99,7 +98,7 @@ Disallow: /`))
 		return
 	} else if r.URL.Path == "/" {
 		var t *template.Template
-		b, _ := ioutil.ReadFile("templates/view.html")
+		b, _ := Asset("templates/view.html")
 		t, err = template.New("view").Parse(string(b))
 		if err != nil {
 			log.Error(err)
