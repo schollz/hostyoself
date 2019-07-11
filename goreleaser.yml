@@ -1,0 +1,86 @@
+project_name: hostyoself
+build:
+  main: main.go
+  binary: hostyoself
+  ldflags: -s -w -X main.Version="v{{.Version}}-{{.Date}}"
+  env:
+    - CGO_ENABLED=0
+  goos:
+    - darwin
+    - linux
+    - windows
+    - freebsd
+    - netbsd
+    - openbsd
+    - dragonfly
+  goarch:
+    - amd64
+    - 386
+    - arm
+    - arm64
+  goarm:
+    - 7
+nfpm:
+  formats:
+    - deb
+  vendor: "schollz.com"
+  homepage: "https://schollz.com/software/hostyoself/"
+  maintainer: "schollz <schollz@mg.hostyoself.com>"
+  description: "A simple, secure, and fast way to transfer data."
+  license: "MIT"
+  name_template: "{{.ProjectName}}_{{.Version}}_{{.Os}}-{{.Arch}}"
+  replacements:
+    amd64: 64bit
+    386: 32bit
+    arm: ARM
+    arm64: ARM64
+    darwin: macOS
+    linux: Linux
+    windows: Windows
+    openbsd: OpenBSD
+    netbsd: NetBSD
+    freebsd: FreeBSD
+    dragonfly: DragonFlyBSD
+archives:
+  -
+    format: tar.gz
+    format_overrides:
+      - goos: windows
+        format: zip
+    name_template: "{{.ProjectName}}_{{.Version}}_{{.Os}}-{{.Arch}}"
+    replacements:
+      amd64: 64bit
+      386: 32bit
+      arm: ARM
+      arm64: ARM64
+      darwin: macOS
+      linux: Linux
+      windows: Windows
+      openbsd: OpenBSD
+      netbsd: NetBSD
+      freebsd: FreeBSD
+      dragonfly: DragonFlyBSD
+    files:
+      - README.md
+      - LICENSE
+
+brew:
+  github:
+    owner: schollz
+    name: homebrew-tap
+  folder: Formula
+  description: "hostyoself lets you host your files using websockets from the command line or a browser."
+  homepage: "https://schollz.com/software/hostyoself/"
+  install: |
+    bin.install "hostyoself"
+
+  test: |
+    system "#{bin}/hostyoself --version"
+
+scoop:
+  bucket:
+    owner: schollz
+    name: scoop-bucket
+  homepage: "https://schollz.com/software/hostyoself/"
+  description: "hostyoself lets you host your files using websockets from the command line or a browser."
+  license: MIT
