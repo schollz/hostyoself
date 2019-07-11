@@ -148,6 +148,7 @@ Disallow: /`))
 				data, err = s.get(domain, pathToFile, ipAddress)
 			}
 			if err != nil {
+				log.Debug("problem getting: %s", err.Error())
 				return
 			}
 		}
@@ -161,22 +162,24 @@ Disallow: /`))
 		}
 
 		// determine the content type
-		contentType := dataURL.MediaType.ContentType()
-		if contentType == "application/octet-stream" || contentType == "" {
-			pathToFileExt := filepath.Ext(pathToFile)
-			mimeType := filetype.GetType(pathToFileExt)
-			contentType = mimeType.MIME.Value
-			if contentType == "" {
-				switch pathToFileExt {
-				case ".css":
-					contentType = "text/css"
-				case ".js":
-					contentType = "text/javascript"
-				case ".html":
-					contentType = "text/html"
-				}
+		var contentType string
+		switch filepath.Ext(pathToFile) {
+		case ".css":
+			contentType = "text/css"
+		case ".js":
+			contentType = "text/javascript"
+		case ".html":
+			contentType = "text/html"
+		}
+		if contentType == "" {
+			contentType = dataURL.MediaType.ContentType()
+			if contentType == "application/octet-stream" || contentType == "" {
+				pathToFileExt := filepath.Ext(pathToFile)
+				mimeType := filetype.GetType(pathToFileExt)
+				contentType = mimeType.MIME.Value
 			}
 		}
+		log.Debugf("%s/%s (%s)", domain, pathToFile, contentType)
 
 		// write the data to the requester
 		w.Header().Set("Content-Type", contentType)

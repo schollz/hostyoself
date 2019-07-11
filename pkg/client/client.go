@@ -3,6 +3,7 @@ package client
 import (
 	"io/ioutil"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -44,6 +45,9 @@ func New(domain, key, webocketURL, folder string) (c *client, err error) {
 	if folder == "" {
 		folder = "."
 	}
+
+	folder, _ = filepath.Abs(folder)
+	folder = filepath.ToSlash(folder)
 
 	if _, err = os.Stat(folder); os.IsNotExist(err) {
 		log.Error(err)
@@ -109,9 +113,11 @@ func (c *client) Run() (err error) {
 					Message: "no such file",
 					Key:     c.Key,
 				})
+				log.Infof("%s /%s 404", p.IPAddress, p.Message)
 			} else {
 				var b []byte
-				b, err = ioutil.ReadFile(p.Message)
+
+				b, err = ioutil.ReadFile(path.Join(c.Folder, p.Message))
 				if err != nil {
 					log.Error(err)
 					return
@@ -122,6 +128,7 @@ func (c *client) Run() (err error) {
 					Message: dataurl.EncodeBytes(b),
 					Key:     c.Key,
 				})
+				log.Infof("%s /%s 200", p.IPAddress, p.Message)
 			}
 		}
 		if err != nil {
@@ -169,20 +176,23 @@ func (c *client) watchFileSystem() (err error) {
 		}
 	}()
 
-	filepath.Walk(c.Folder, func(path string, fi os.FileInfo, err error) error {
+	filepath.Walk(c.Folder, func(ppath string, fi os.FileInfo, err error) error {
 		if err != nil {
-			log.Errorf("problem with '%s': %s", path, err.Error())
+			log.Errorf("problem with '%s': %s", ppath, err.Error())
 			return err
 		}
-		if strings.HasPrefix(path, ".git") {
+		ppath = filepath.ToSlash(ppath)
+		if strings.Contains(ppath, ".git") {
 			return nil
 		}
 		if fi.Mode().IsDir() {
-			log.Debugf("watching %s", path)
-			return watcher.Add(path)
+			log.Debugf("watching %s", ppath)
+			return watcher.Add(ppath)
 		} else {
+			ppath, _ = filepath.Abs(ppath)
+			ppath = strings.TrimPrefix(filepath.ToSlash(ppath), c.Folder+"/")
 			c.Lock()
-			c.fileList[filepath.ToSlash(path)] = struct{}{}
+			c.fileList[ppath] = struct{}{}
 			c.Unlock()
 		}
 		return nil
