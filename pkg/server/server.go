@@ -3,7 +3,6 @@ package server
 import (
 	"fmt"
 	"html/template"
-	"io/ioutil"
 	"math/rand"
 	"net/http"
 	"path/filepath"
@@ -76,9 +75,28 @@ Disallow: /`))
 	} else if r.URL.Path == "/favicon.ico" {
 		err = fmt.Errorf("not implemented")
 		return
+	} else if strings.HasPrefix(r.URL.Path, "/static") {
+		var b []byte
+		b, err = Asset(r.URL.Path[1:])
+		if err != nil {
+			http.Error(w, "file not found", 404)
+			return
+		}
+		var contentType string
+		switch filepath.Ext(r.URL.Path) {
+		case ".css":
+			contentType = "text/css"
+		case ".js":
+			contentType = "text/javascript"
+		case ".html":
+			contentType = "text/html"
+		}
+		w.Header().Set("Content-Type", contentType + "; charset=utf-8")
+		w.Write(b)
+		return
 	} else if r.URL.Path == "/" {
 		var t *template.Template
-		b, _ := ioutil.ReadFile("templates/view.html")
+		b, _ := Asset("templates/view.html")
 		t, err = template.New("view").Parse(string(b))
 		if err != nil {
 			log.Error(err)
@@ -124,6 +142,13 @@ Disallow: /`))
 			http.Redirect(w, r, "/"+pathToFile, 302)
 			return
 		}
+
+		// add slash if doesn't exist
+		if filepath.Ext(pathToFile) == "" && string(r.URL.Path[len(r.URL.Path)-1]) != "/" {
+			http.Redirect(w, r, r.URL.Path+"/", 302)
+			return
+		}
+
 		// trim prefix to get the path to file
 		pathToFile = strings.TrimPrefix(pathToFile, domain)
 		if len(pathToFile) == 0 || string(pathToFile[0]) == "/" {

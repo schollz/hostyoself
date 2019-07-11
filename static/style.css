@@ -1,0 +1,331 @@
+:root {
+    --mono-font: San Francisco Mono, Monaco, "Consolas", "Lucida Console", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", monospace;
+    --sans-font: -apple-system, BlinkMacSystemFont, 'avenir next', avenir, helvetica, 'helvetica neue', roboto, noto, 'segoe ui', arial, sans-serif
+}
+
+* {
+    /* reset header margines */
+    margin: 0;
+}
+
+body {
+    margin: 1em;
+    background: rgb(253, 253, 253);
+}
+
+main {
+    line-height: 1.6em;
+    font-size: 1em;
+    max-width: 580px;
+    margin: 1em auto;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    font-family: var(--sans-font);
+
+
+    /* break words URLs */
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+
+    /* Adds a hyphen where the word breaks, if supported (No Blink) */
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+}
+
+p {
+    /* hyphenate paragraphs */
+    -webkit-hyphens: auto;
+    -webkit-hyphenate-limit-before: 3;
+    -webkit-hyphenate-limit-after: 3;
+    -webkit-hyphenate-limit-chars: 6 3 3;
+    -webkit-hyphenate-limit-lines: 2;
+    -webkit-hyphenate-limit-last: always;
+    -webkit-hyphenate-limit-zone: 8%;
+
+    -moz-hyphens: auto;
+    -moz-hyphenate-limit-chars: 6 3 3;
+    -moz-hyphenate-limit-lines: 2;
+    -moz-hyphenate-limit-last: always;
+    -moz-hyphenate-limit-zone: 8%;
+
+    -ms-hyphens: auto;
+    -ms-hyphenate-limit-chars: 6 3 3;
+    -ms-hyphenate-limit-lines: 2;
+    -ms-hyphenate-limit-last: always;
+    -ms-hyphenate-limit-zone: 8%;
+
+    hyphens: auto;
+    hyphenate-limit-chars: 6 3 3;
+    hyphenate-limit-lines: 2;
+    hyphenate-limit-last: always;
+    hyphenate-limit-zone: 8%;
+}
+
+
+ul,
+ol {
+    padding-left: 1.5em;
+}
+
+sup {
+    line-height: 0em;
+    font-size: 0.7em;
+}
+
+
+figure,
+p,
+ul,
+ol,
+pre,
+hr {
+    margin-bottom: 1.1em;
+}
+
+/* headers */
+h2,
+h3,
+h4,
+h5 {
+    margin-bottom: 0.2em;
+    margin-top: 1em;
+}
+
+h1 {
+    font-size: 1.6em;
+    letter-spacing: .004em;
+    margin-bottom: 0.4em;
+}
+
+h2 {
+    font-size: 1.3em;
+    letter-spacing: .009em
+}
+
+h3 {
+    font-size: 1.2em;
+    letter-spacing: .009em
+}
+
+h4 {
+    font-weight: 600;
+    font-size: 1.1em;
+}
+
+h5 {
+    font-weight: 600;
+    font-size: 1.05em;
+}
+
+
+/* quotes */
+blockquote {
+    margin: 1.5em 1em;
+    font-style: italic;
+    quotes: "\201C""\201D""\2018""\2019";
+    width: 100%;
+    font-size: 0.9em;
+}
+
+/* links */
+a {
+    text-decoration: underline;
+    cursor: pointer;
+    color: #000;
+    text-decoration-skip-ink: auto;
+    text-decoration: underline;
+}
+
+
+a:visited {
+    color: #333
+}
+
+
+/* code */
+code {
+    font-family: var(--mono-font);
+    background-color: rgba(27, 31, 35, .05);
+    border-radius: 3px;
+    font-size: 85%;
+    margin: 0;
+    padding: .2em .4em;
+}
+
+pre {
+    margin-top: 1em;
+    word-wrap: normal;
+    background-color: #f6f8fa;
+    border-radius: 3px;
+    font-size: 85%;
+    line-height: 1.45;
+    overflow: auto;
+    padding: 16px;
+}
+
+pre code {
+    background-color: transparent;
+    border: 0;
+    display: inline;
+    line-height: inherit;
+    margin: 0;
+    max-width: auto;
+    overflow: visible;
+    padding: 0;
+    word-wrap: normal;
+}
+
+pre>code {
+    background: transparent;
+    border: 0;
+    font-size: 100%;
+    margin: 0;
+    padding: 0;
+    white-space: pre;
+    word-break: normal;
+}
+
+img {
+    width: 100%;
+}
+
+.dropzone {
+    margin-top: 1em;
+    margin-bottom: 1em;
+    min-height: 0px !important;
+}
+
+.tooltip {
+    position: relative;
+
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 140px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 150%;
+    left: 50%;
+    margin-left: -75px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
+.error {
+    color: #dc3545;
+}
+
+/* The snackbar - position it at the bottom and in the middle of the screen */
+#snackbar {
+    font-size: 80%;
+    line-height: 1.2em;
+    visibility: hidden;
+    /* Hidden by default. Visible on click */
+    min-width: 250px;
+    /* Set a default minimum width */
+    margin-left: -125px;
+    /* Divide value of min-width by 2 */
+    background-color: #333;
+    /* Black background color */
+    color: #fff;
+    /* White text color */
+    text-align: center;
+    /* Centered text */
+    border-radius: 2px;
+    /* Rounded borders */
+    padding: 12px;
+    /* Padding */
+    position: fixed;
+    /* Sit on top of the screen */
+    z-index: 1;
+    /* Add a z-index if needed */
+    left: 50%;
+    /* Center the snackbar */
+    bottom: 30px;
+    /* 30px from the bottom */
+}
+
+/* Show the snackbar when clicking on a button (class added with JavaScript) */
+.show {
+    visibility: visible !important;
+    /* Show the snackbar */
+
+    /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
+However, delay the fade out process for 2.5 seconds */
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+/* Animations to fade the snackbar in and out */
+@-webkit-keyframes fadein {
+    from {
+        bottom: 0;
+        opacity: 0;
+    }
+
+    to {
+        bottom: 30px;
+        opacity: 1;
+    }
+}
+
+@keyframes fadein {
+    from {
+        bottom: 0;
+        opacity: 0;
+    }
+
+    to {
+        bottom: 30px;
+        opacity: 1;
+    }
+}
+
+@-webkit-keyframes fadeout {
+    from {
+        bottom: 30px;
+        opacity: 1;
+    }
+
+    to {
+        bottom: 0;
+        opacity: 0;
+    }
+}
+
+@keyframes fadeout {
+    from {
+        bottom: 30px;
+        opacity: 1;
+    }
+
+    to {
+        bottom: 0;
+        opacity: 0;
+    }
+}

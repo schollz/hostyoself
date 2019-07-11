@@ -1,3 +1,4 @@
+pkg/server/assets.go
 # Binaries for programs and plugins
 *.exe
 *.exe~
