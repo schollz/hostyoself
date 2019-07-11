@@ -1,6 +1,6 @@
 <p align="center">
 <img
-    src="/static/hostyoself2.png" border="0" alt="hostyoself">
+    src="/static/hostyoself.jpg" border="0" alt="hostyoself">
 <br>
 <a href="https://travis-ci.org/schollz/hostyoself"><img
 src="https://img.shields.io/travis/schollz/hostyoself.svg?style=flat-square"
@@ -9,7 +9,7 @@ href="https://github.com/schollz/hostyoself/releases/latest"><img
 src="https://img.shields.io/badge/version-0.0.0-brightgreen.svg?style=flat-square"
 alt="Version"></a> </p>
 
-<p align="center">A hosting service for absolute minimalists. Try it at <a href="https://hostyoself.com">hostyoself.com</a>.</p>
+<p align="center">A hosting service from the browser, because why not. Try it at <a href="https://hostyoself.com">hostyoself.com</a>.</p>
 
 
 ## Host from the browser
