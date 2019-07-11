@@ -1,6 +1,17 @@
-<center>
-<img src="/static/hostyoself2.png">
-</center>
+<p align="center">
+<img
+    src="/static/hostyoself2.png"
+    width="260" border="0" alt="hostyoself">
+<br>
+<a href="https://travis-ci.org/schollz/hostyoself"><img
+src="https://img.shields.io/travis/schollz/hostyoself.svg?style=flat-square"
+alt="Build Status"></a> <a
+href="https://github.com/schollz/hostyoself/releases/latest"><img
+src="https://img.shields.io/badge/version-0.0.0-brightgreen.svg?style=flat-square"
+alt="Version"></a> </p>
+
+<p align="center">A hosting service for absolute minimalists. Try it at <a href="https://hostyoself.com">hostyoself.com</a>.</p>
+
 
 **How do I start web hosting?** You will need to setup port forwarding, a dynamic DNS, name registration, MySQL, PHP, Apache and take a online course in Javascript. 
 
