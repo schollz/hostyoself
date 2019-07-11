@@ -268,7 +268,7 @@
             }
 
             document.getElementById("consoleHeader").innerHTML =
-                `<p>Your ${filesString} served at: <strong><a href="${domainName}" target="_blank">${domainName}</a></strong></p>`;
+                `<p>Your ${filesString} available at:<br> <center><strong><a href="${domainName}" target="_blank">${domainName}</a></strong></center></p>`;
             html = `<ul>`
             for (i = 0; i < files.length; i++) {
                 var urlToFile = files[i].name;
