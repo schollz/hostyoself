@@ -127,13 +127,17 @@ Disallow: /`))
 		// determine file path and the domain
 		pathToFile := r.URL.Path[1:]
 		domain := strings.Split(r.URL.Path[1:], "/")[0]
-		// if there is a referer, try to obtain the domain from referer
-		piecesOfReferer := strings.Split(r.Referer(), "/")
-		if len(piecesOfReferer) > 4 && strings.HasPrefix(r.Referer(), s.publicURL) {
-			domain = piecesOfReferer[3]
-		}
 		// clean domain
 		domain = strings.Replace(strings.ToLower(strings.TrimSpace(domain)), " ", "-", -1)
+		if !s.isdomain(domain) {
+			log.Debugf("getting referer")
+			// if there is a referer, try to obtain the domain from referer
+			piecesOfReferer := strings.Split(r.Referer(), "/")
+			if len(piecesOfReferer) > 4 && strings.HasPrefix(r.Referer(), s.publicURL) {
+				domain = piecesOfReferer[3]
+				domain = strings.Replace(strings.ToLower(strings.TrimSpace(domain)), " ", "-", -1)
+			}
+		}
 
 		// prefix the domain if it doesn't exist
 		if !strings.HasPrefix(pathToFile, domain) {
@@ -273,6 +277,13 @@ func (s *server) handleWebsocket(w http.ResponseWriter, r *http.Request) (err er
 		Success: true,
 	})
 	return
+}
+
+func (s *server) isdomain(domain string) bool {
+	s.Lock()
+	_, ok := s.conn[domain]
+	s.Unlock()
+	return ok
 }
 
 func (s *server) get(domain, filePath, ipAddress string) (payload string, err error) {
