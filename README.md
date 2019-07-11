@@ -2,11 +2,9 @@
 <img
     src="/static/banner.jpg" border="0" alt="hostyoself">
 <br>
-<a href="https://travis-ci.org/schollz/hostyoself"><img
-src="https://img.shields.io/travis/schollz/hostyoself.svg?style=flat-square"
-alt="Build Status"></a> <a
+<a
 href="https://github.com/schollz/hostyoself/releases/latest"><img
-src="https://img.shields.io/badge/version-0.0.0-brightgreen.svg?style=flat-square"
+src="https://img.shields.io/badge/version-0.0.1-brightgreen.svg?style=flat-square"
 alt="Version"></a> </p>
 
 <p align="center">A hosting service from the browser, because why not. Try it at <a href="https://hostyoself.com">hostyoself.com</a>.</p>
