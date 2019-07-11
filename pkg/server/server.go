@@ -252,7 +252,7 @@ func (s *server) get(domain, filePath, ipAddress string) (payload string, err er
 		connections = s.conn[domain]
 	}
 	s.Unlock()
-	if connections == nil {
+	if connections == nil || len(connections) == 0 {
 		err = fmt.Errorf("no connections available for domain %s", domain)
 		log.Debug(err)
 		return
