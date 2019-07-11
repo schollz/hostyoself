@@ -57,25 +57,18 @@ Just *kidding*! You don't need any of that crap. Just goto [hostyoself.com](http
 
 **Does this use AI or blockchain?** Sure, why not. 
 
-**What inspired this?** [websocketd](https://github.com/joewalnes/websocketd) which shows the magic of websockets and [beaker browser](https://beakerbrowser.com/) which shows the magic of browser hosting.
+**What inspired this?** [beaker browser](https://beakerbrowser.com/), [ngrok](https://ngrok.com/), [localhost.run](http://localhost.run/), [inlets.dev](https://github.com/alexellis/inlets), Parks and Recreation.
 
 **What's the point of this?** You can host a website! You can share a file! Anything you want, directly from your browser!
 
 ## Develop
 
-To install from source:
-
 ```
 $ git clone https://github.com/schollz/hostyoself
-$ cd offlinenotepad
+$ cd hostyoself
 $ go generate -v -x
 $ go build -v
 ```
-
-
-## Inspiration
-
-[ngrok](https://ngrok.com/), [localhost.run](http://localhost.run/), [inlets.dev](https://github.com/alexellis/inlets), Parks and Recreation.
 
 ## License 
 
