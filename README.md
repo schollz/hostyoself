@@ -31,7 +31,7 @@ Now if you have a file in your folder `README.md` you can access it with the pub
 Want to run your own relay? Its easy. 
 
 ```
-$ hostyoself  relay --url https://yoururl
+$ hostyoself relay --url https://yoururl
 ```
 
 ## FAQ
@@ -45,7 +45,7 @@ Just *kidding*! You don't need any of that crap. Just goto [hostyoself.com](http
 
 **Seriously, how is this possible?** The relay uses websockets in your browser to process GET commands.
 
-**Won't my website disappear when I close my browser?** Yep! There is a command-line tool that doesn't require a browser so it can run in the background if you need that. But yes, if your computer turns off then your site is down. Welcome to the joys of hosting a site on the internet.
+**Won't my website disappear when I close my browser?** Yep! There is a [command-line tool](https://github.com/schollz/hostyoself#host-from-the-command-line) that doesn't require a browser so it can run in the background if you need that. But yes, if your computer turns off then your site is down. Welcome to the joys of hosting a site on the internet.
 
 **Won't I have to reload my browser if I change a file?** Yep! Welcome to the joys of Javascript.
 
