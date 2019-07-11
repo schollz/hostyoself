@@ -1,7 +1,6 @@
 <p align="center">
 <img
-    src="/static/hostyoself2.png"
-    width="260" border="0" alt="hostyoself">
+    src="/static/hostyoself2.png" border="0" alt="hostyoself">
 <br>
 <a href="https://travis-ci.org/schollz/hostyoself"><img
 src="https://img.shields.io/travis/schollz/hostyoself.svg?style=flat-square"
