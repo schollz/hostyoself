@@ -9,6 +9,12 @@ alt="Version"></a> </p>
 
 <p align="center">A hosting service from the browser, because why not. Try it at <a href="https://hostyoself.com">hostyoself.com</a>.</p>
 
+## See it in action
+
+Here's an example where I use this `hostyoself.com` to host itself. I download the `hostyoself.com` and then host `hostyoself.com` from `hostyoself.com`. This is like the sequel to Inception.
+
+![Inception](/static/inception.gif)
+
 
 ## Host from the browser
 
