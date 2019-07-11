@@ -4,7 +4,7 @@
 <br>
 <a
 href="https://github.com/schollz/hostyoself/releases/latest"><img
-src="https://img.shields.io/badge/version-0.0.1-brightgreen.svg?style=flat-square"
+src="https://img.shields.io/badge/version-0.0.2-brightgreen.svg?style=flat-square"
 alt="Version"></a> </p>
 
 <p align="center">A hosting service from the browser, because why not. Try it at <a href="https://hostyoself.com">hostyoself.com</a>.</p>
@@ -13,6 +13,8 @@ alt="Version"></a> </p>
 ## Host from the browser
 
 Open [hostyoself.com](https://hostyoself.com) and drag and drop a folder, or select a file. Your browser will host the files!
+
+This website can even host itself: https://hostyoself.com/hostyoself/
 
 ## Host from the command line
 
