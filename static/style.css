@@ -329,3 +329,67 @@ However, delay the fade out process for 2.5 seconds */
         opacity: 0;
     }
 }
+
+
+
+.main {
+    padding-top: 20px;
+}
+
+.list {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.list>div {
+    padding: 0.4em;
+}
+
+body {
+    text-decoration-skip: ink;
+}
+
+.hide {
+    display: none;
+}
+
+textarea {
+    width: 100%;
+    border: none;
+    resize: none;
+    height: 20em;
+    border: 1px solid #ccc;
+    background-color: #f5f5f5;
+    padding: 1em;
+    font-size: 0.9em;
+}
+
+details>p>code {
+    background-color: inherit;
+}
+
+.editer {
+    margin: 0.2em;
+    padding: 0.5em;
+    background-color: #f5f5f5;
+    display: inline;
+    border: none;
+    font-weight: bold;
+    font-family: var(--sans-font);
+    font-size: 1em;
+}
+
+.banner {
+    padding-top: 3em;
+}
+
+.p05 {
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+}
+
+.flexcol {
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+}

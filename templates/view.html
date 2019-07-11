@@ -2,70 +2,46 @@
 <html>
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta name="msapplication-TileColor" content="#ffffff">
-    <meta name="theme-color" content="#ffffff">
+    <meta charset='utf-8'>
+    <title>host yo self</title>
+    <meta name="google-site-verification" content="shffrGJ5t6F5m-ILyEVvbmxk8Fh1x_dSl6SF-WNKIWU" />
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='description' content='Need a web host? Host your self! Use this page to host a website or a file directly from your computer / phone / smartwatch / toaster!'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='canonical' href='{{.PublicURL}}/'>
+    <link rel='manifest' href='/static/manifest.json'>
+    <meta name='mobile-web-app-capable' content='yes'>
+    <meta name='apple-mobile-web-app-capable' content='yes'>
+    <meta name='application-name' content='Host Yo Self'>
+    <meta name='apple-mobile-web-app-status-bar-style' content='black'>
+    <meta name='apple-mobile-web-app-title' content='Host Yo Self'>
+    <link rel='icon' sizes='192x192' href='/static/images/touch/android-launchericon-192-192.png'>
+    <link rel='apple-touch-icon' href='/static/images/touch/android-launchericon-192-192.png'>
+    <meta property='og:image' content='{{.PublicURL}}/static/images/touch/android-launchericon-192-192.png'>
+    <meta name='msapplication-TileImage' content='/static/images/touch/android-launchericon-144-144.png'>
+    <meta name='msapplication-TileColor' content='#375EAB'>
+    <meta name='theme-color' content='#375EAB'>
+    <meta property='og:title' content='Host Yo Self'>
+    <meta property='og:type' content='website'>
+    <meta property='og:url' content='{{.PublicURL}}/'>
+    <meta property='og:description' content='Need a web host? Host your self! Use this page to host a website or a file directly from your computer / phone / smartwatch / toaster!'>
+    <meta name='twitter:card' content='summary'>
+    <meta name='twitter:url' content='{{.PublicURL}}/'>
+    <meta name='twitter:title' content='Host Yo Self'>
+    <meta name='twitter:description' content='Need a web host? Host your self! Use this page to host a website or a file directly from your computer / phone / smartwatch / toaster!'>
+    <meta name='twitter:image' content='{{.PublicURL}}/static/images/touch/android-launchericon-192-192.png'>
+    <meta name='twitter:creator' content='@yakczar'>
     <link rel="stylesheet" href="/static/dropzone.css">
     <link rel="stylesheet" href="/static/style.css">
-    <title>hostyoself</title>
-    <style>
-        .main {
-            padding-top: 20px;
-        }
-
-        .list {
-            display: flex;
-            flex-wrap: wrap;
-        }
-
-        .list>div {
-            padding: 0.4em;
-        }
-
-        body {
-            text-decoration-skip: ink;
-        }
-
-        .hide {
-            display: none;
-        }
-
-        textarea {
-            width: 100%;
-            border: none;
-            resize: none;
-            height: 20em;
-            border: 1px solid #ccc;
-            background-color: #f5f5f5;
-            padding: 1em;
-            font-size: 0.9em;
-        }
-
-        details>p>code {
-            background-color: inherit;
-        }
-
-        .editer {
-            margin: 0.2em;
-            background-color: inherit;
-            display: inline;
-            border: none;
-            font-weight: bold;
-            font-family: var(--mono-font);
-            font-size: 1em;
-        }
-    </style>
 </head>
 
 <body>
     <main>
         <!--         <h1 align="center"><a href="/">hostyoself</a> </h1>
  -->
-        <img src="/static/hostyoself2.png">
+        <img src="/static/banner.jpg" class="banner">
         <p id="errormessage" class="error"></p>
-        <p>Your files will be relayed at <code>{{.PublicURL}}/<input type='text' id="inputDomain" class="editer" value="{{.GeneratedDomain}}" style="width:7em;"></code>. Multiple hosts can be used with this key: <code><input type='text' id="inputKey" class="editer" value="{{.GeneratedKey}}" style="width:3.5em;"></code>.</p>
+        <p>Need a web host? <em>Host yo self!</em> Use this page to host a website or a file directly from your computer / phone / smartwatch / toaster!</p>
         <details>
             <summary>Click here for FAQ.</summary>
             <h2 id=" faq">FAQ</h2>
@@ -163,10 +139,78 @@
                     <summary>
                         <h2 id="privacy" style="display:inline;">Privacy policy</h2>
                     </summary>
-                    Privacy policy
+                    <p>Effective date: July 11, 2019</p>
+                    <p>Host Yo Self ("us", "we", or "our") operates the https://hostyoself.com website (the "Service").</p>
+                    <p>This page informs you of our policies regarding the collection, use, and disclosure of personal data when you use our Service and the choices you have associated with that data.</p>
+                    <p>We use your data to provide and improve the Service. By using the Service, you agree to the collection and use of information in accordance with this policy. Unless otherwise defined in this Privacy Policy, terms used in this Privacy Policy have the same meanings as in our Terms and Conditions, accessible from https://hostyoself.com</p>
+                    <h2>Information Collection And Use</h2>
+                    <p>We collect several different types of information for various purposes to provide and improve our Service to you.</p>
+                    <h3>Types of Data Collected</h3>
+                    <h4>Personal Data</h4>
+                    <p>While using our Service, we may ask you to provide us with certain personally identifiable information that can be used to contact or identify you ("Personal Data"). Personally identifiable information may include, but is not limited to:</p>
+                    <ul>
+                        <li>Usage Data</li>
+                    </ul>
+                    <h4>Usage Data</h4>
+                    <p>We may also collect information how the Service is accessed and used ("Usage Data"). This Usage Data may include information such as your computer's Internet Protocol address (e.g. IP address), browser type, browser version, the pages of our Service that you visit, the time and date of your visit, the time spent on those pages, unique device identifiers and other diagnostic data.</p>
+                    <h2>Use of Data</h2>
+                    <p>Host Yo Self uses the collected data for various purposes:</p>
+                    <ul>
+                        <li>To provide and maintain the Service</li>
+                        <li>To notify you about changes to our Service</li>
+                        <li>To allow you to participate in interactive features of our Service when you choose to do so</li>
+                        <li>To provide customer care and support</li>
+                        <li>To provide analysis or valuable information so that we can improve the Service</li>
+                        <li>To monitor the usage of the Service</li>
+                        <li>To detect, prevent and address technical issues</li>
+                    </ul>
+                    <h2>Transfer Of Data</h2>
+                    <p>Your information, including Personal Data, may be transferred to — and maintained on — computers located outside of your state, province, country or other governmental jurisdiction where the data protection laws may differ than those from your jurisdiction.</p>
+                    <p>If you are located outside United States and choose to provide information to us, please note that we transfer the data, including Personal Data, to United States and process it there.</p>
+                    <p>Your consent to this Privacy Policy followed by your submission of such information represents your agreement to that transfer.</p>
+                    <p>Host Yo Self will take all steps reasonably necessary to ensure that your data is treated securely and in accordance with this Privacy Policy and no transfer of your Personal Data will take place to an organization or a country unless there are adequate controls in place including the security of your data and other personal information.</p>
+                    <h2>Disclosure Of Data</h2>
+                    <h3>Legal Requirements</h3>
+                    <p>Host Yo Self may disclose your Personal Data in the good faith belief that such action is necessary to:</p>
+                    <ul>
+                        <li>To comply with a legal obligation</li>
+                        <li>To protect and defend the rights or property of Host Yo Self</li>
+                        <li>To prevent or investigate possible wrongdoing in connection with the Service</li>
+                        <li>To protect the personal safety of users of the Service or the public</li>
+                        <li>To protect against legal liability</li>
+                    </ul>
+                    <h2>Security Of Data</h2>
+                    <p>The security of your data is important to us, but remember that no method of transmission over the Internet, or method of electronic storage is 100% secure. While we strive to use commercially acceptable means to protect your Personal Data, we cannot guarantee its absolute security.</p>
+                    <h2>Service Providers</h2>
+                    <p>We may employ third party companies and individuals to facilitate our Service ("Service Providers"), to provide the Service on our behalf, to perform Service-related services or to assist us in analyzing how our Service is used.</p>
+                    <p>These third parties have access to your Personal Data only to perform these tasks on our behalf and are obligated not to disclose or use it for any other purpose.</p>
+                    <h2>Links To Other Sites</h2>
+                    <p>Our Service may contain links to other sites that are not operated by us. If you click on a third party link, you will be directed to that third party's site. We strongly advise you to review the Privacy Policy of every site you visit.</p>
+                    <p>We have no control over and assume no responsibility for the content, privacy policies or practices of any third party sites or services.</p>
+                    <h2>Children's Privacy</h2>
+                    <p>Our Service does not address anyone under the age of 18 ("Children").</p>
+                    <p>We do not knowingly collect personally identifiable information from anyone under the age of 18. If you are a parent or guardian and you are aware that your Children has provided us with Personal Data, please contact us. If we become aware that we have collected Personal Data from children without verification of parental consent, we take steps to remove that information from our servers.</p>
+                    <h2>Changes To This Privacy Policy</h2>
+                    <p>We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page.</p>
+                    <p>We will let you know via email and/or a prominent notice on our Service, prior to the change becoming effective and update the "effective date" at the top of this Privacy Policy.</p>
+                    <p>You are advised to review this Privacy Policy periodically for any changes. Changes to this Privacy Policy are effective when they are posted on this page.</p>
+                    <h2>Contact Us</h2>
+                    <p>If you have any questions about this Privacy Policy, please contact us:</p>
+                    <ul>
+                        <li>By email: schollz@mg.hostyoself.com</li>
+                    </ul>
                 </details>
             </p>
         </details>
+        <div style="padding-top: 0.5em;" class="flexcol">
+            <label for="inputDomain" class="p05">Choose a domain name: &nbsp;</label>
+            <input type='text' name="inputDomain" id="inputDomain" class="editer" value="{{.GeneratedDomain}}" style="flex:1">
+        </div>
+        <div class="flexcol">
+            <label for="inputDomain" class="p05">Key: &nbsp;</label>
+            <input type='text' name="inputKey" id="inputKey" class="editer" value="{{.GeneratedKey}}" style="flex:1; max-width: 6em;">
+            <span style="flex:1;" class="p05"><small>&nbsp;&nbsp;(You can spawn multiple hosts with this key).</small></span>
+        </div>
         <div id="filesBox" class="dropzone">
             <div class="dz-message" data-dz-message>
                 <span>Drag and drop a folder or click to share a file.<br>
@@ -191,194 +235,11 @@
             <p align="center">Made by <a href="https://github.com/schollz">schollz</a>, source available on <a href="https://github.com/schollz/hostyoself">Github</a>.</p>
         </footer>
     </main>
-    <script src="/static/dropzone.js"></script>
     <script>
-    var files = [];
-    var isConnected = false;
-    var relativeDirectory = "";
-
-    function consoleLog(s) {
-        console.log(s);
-        if (typeof s === 'object') {
-            s = JSON.stringify(s);
-        }
-
-        if (!(s.startsWith("[debug]"))) {
-            document.getElementById("consoleText").value = document.getElementById("consoleText").value + s + "\n";
-            document.getElementById("consoleText").scrollTop = document.getElementById("consoleText").scrollHeight;
-        }
-    }
-
-    function humanFileSize(bytes, si) {
-        var thresh = si ? 1000 : 1024;
-        if (Math.abs(bytes) < thresh) {
-            return bytes + ' B';
-        }
-        var units = si ? ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'] : ['KiB', 'MiB', 'GiB', 'TiB', 'PiB',
-            'EiB', 'ZiB', 'YiB'
-        ];
-        var u = -1;
-        do {
-            bytes /= thresh;
-            ++u;
-        } while (Math.abs(bytes) >= thresh && u < units.length - 1);
-        return bytes.toFixed(1) + ' ' + units[u];
-    }
-
-    var Name = "";
-    var filesize = 0;
-
-    (function(Dropzone) {
-        Dropzone.autoDiscover = false;
-
-        let drop = new Dropzone('div#filesBox', {
-            maxFiles: 1000,
-            url: '/',
-            method: 'post',
-            createImageThumbnails: false,
-            previewTemplate: "<div id='preview' class='.dropzone-previews'></div>",
-            autoProcessQueue: false,
-        });
-
-
-        drop.on('addedfile', function(file) {
-            // console.log(file);
-            var domain = document.getElementById("inputDomain").value
-            files.push(file);
-            if (files.length == 1) {
-                relativeDirectory = file.webkitRelativePath.split("/")[0];
-            } else if (file.webkitRelativePath.split("/")[0] != relativeDirectory) {
-                relativeDirectory = "";
-            }
-
-            if (!(isConnected)) {
-                isConnected = true;
-                socketSend({
-                    type: "domain",
-                    message: domain,
-                    key: document.getElementById("inputKey").value,
-                })
-            }
-
-            var filesString = "files are";
-            var domainName = `{{.PublicURL}}/${domain}/`;
-            if (files.length == 1) {
-                filesString = "file is"
-                domainName += `${file.name}`
-            }
-
-            document.getElementById("consoleHeader").innerHTML =
-                `<p>Your ${filesString} available at:<br> <center><strong><a href="${domainName}" target="_blank">${domainName}</a></strong></center></p>`;
-            html = `<ul>`
-            for (i = 0; i < files.length; i++) {
-                var urlToFile = files[i].name;
-                if ('fullPath' in files[i]) {
-                    urlToFile = files[i].fullPath;
-                }
-                html = html +
-                    `<li><a href="/${domain}/${urlToFile}" target="_blank">/${urlToFile}</a></li>`
-            }
-            html = html + `</ul>`;
-            document.getElementById("fileList").innerHTML = html;
-            document.getElementById("filesBox").classList.add("hide");
-            document.getElementById("console").classList.remove("hide");
-            document.getElementById("inputKey").readOnly = "true";
-            document.getElementById("inputDomain").readOnly = "true";
-        })
-
-    })(Dropzone);
-
-    var socket; // websocket
-
-
-    /* websockets */
-    function socketSend(data) {
-        if (socket == null) {
-            return
-        }
-        if (socket.readyState != 1) {
-            return
-        }
-        jsonData = JSON.stringify(data);
-        socket.send(jsonData);
-        if (jsonData.length > 100) {
-            consoleLog("[debug] ws-> " + jsonData.substring(0, 99))
-        } else {
-            consoleLog("[debug] ws-> " + jsonData)
-        }
-    }
-
-    const socketMessageListener = (event) => {
-        var data = JSON.parse(event.data);
-        if (!('type' in data && 'message' in data)) {
-            consoleLog(`[warn] got bad data ${event.data}`);
-            return
-        }
-        console.log(data)
-        consoleLog(`[debug] ${data.message}`)
-        if (data.type == "get") {
-            var foundFile = false
-            var iToSend = 0
-            for (i = 0; i < files.length; i++) {
-                if (files[i].webkitRelativePath == data.message || files[i].name == data.message || files[i]
-                    .webkitRelativePath == relativeDirectory + "/" + data.message) {
-                    iToSend = i;
-                    var reader = new FileReader();
-                    reader.onload = function(theFile) {
-                        socketSend({
-                            type: "get",
-                            message: reader.result,
-                            success: true,
-                            key: document.getElementById("inputKey").value,
-                        })
-                        consoleLog(
-                            `${data.ip} [${(new Date()).toUTCString()}] /${data.message} 200 ${files[i].size}`
-                        );
-                    };
-                    reader.readAsDataURL(files[i]);
-                    foundFile = true
-                    break
-                }
-            }
-            if (foundFile == false) {
-                socketSend({
-                    type: "get",
-                    message: "not found",
-                    success: false,
-                    key: document.getElementById("inputKey").value,
-                })
-                consoleLog(`${data.ip} [${(new Date()).toUTCString()}] /${data.message} 404`);
-            }
-        } else if (data.type == "domain") {
-            console.log(`[info] ${data.message}`);
-        } else if (data.type == "message") {
-            console.log(`[info] ${data.message}`);
-        } else {
-            consoleLog(`[debug] unknown`);
-        }
-    };
-    const socketOpenListener = (event) => {
-        consoleLog('[info] connected');
-    };
-
-    const socketCloseListener = (event) => {
-        if (socket) {
-            consoleLog('[info] disconnected');
-        }
-        var url = window.origin.replace("http", "ws") + '/ws';
-        try {
-            socket = new WebSocket(url);
-            socket.addEventListener('open', socketOpenListener);
-            socket.addEventListener('message', socketMessageListener);
-            socket.addEventListener('close', socketCloseListener);
-        } catch (err) {
-            consoleLog("[info] no connection available")
-        }
-    };
-
-
-    socketCloseListener();
+    window.publicURL = "{{.PublicURL}}";
     </script>
+    <script src="/static/dropzone.js"></script>
+    <script src="/static/main.js"></script>
 </body>
 
 </html>
