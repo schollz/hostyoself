@@ -1,5 +1,6 @@
-![hostyoself](/static/hostyoself2.png)
-
+<center>
+<img src="/static/hostyoself2.png">
+</center>
 
 **How do I start web hosting?** You will need to setup port forwarding, a dynamic DNS, name registration, MySQL, PHP, Apache and take a online course in Javascript. 
 
