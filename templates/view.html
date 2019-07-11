@@ -54,13 +54,16 @@
             border: none;
             font-weight: bold;
             font-family: var(--mono-font);
+            font-size: 1em;
         }
     </style>
 </head>
 
 <body>
     <main>
-        <h1 align="center"><a href="/">hostyoself</a> </h1>
+        <!--         <h1 align="center"><a href="/">hostyoself</a> </h1>
+ -->
+        <img src="/static/hostyoself2.png">
         <p id="errormessage" class="error"></p>
         <p>Your files will be relayed at <code>{{.PublicURL}}/<input type='text' id="inputDomain" class="editer" value="{{.GeneratedDomain}}" style="width:7em;"></code>. Multiple hosts can be used with this key: <code><input type='text' id="inputKey" class="editer" value="{{.GeneratedKey}}" style="width:3.5em;"></code>.</p>
         <details>

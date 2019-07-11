@@ -90,8 +90,10 @@ Disallow: /`))
 			contentType = "text/javascript"
 		case ".html":
 			contentType = "text/html"
+		case ".png":
+			contentType = "image/png"
 		}
-		w.Header().Set("Content-Type", contentType + "; charset=utf-8")
+		w.Header().Set("Content-Type", contentType)
 		w.Write(b)
 		return
 	} else if r.URL.Path == "/" {

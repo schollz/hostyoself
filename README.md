@@ -1,8 +1,5 @@
-# omniserve
+![static/hostyoself2.png]
 
-onetwoseven.site: 127 is the last network number in a class A network with a subnet mask of 255.0.0.0. 127.0.0.1 is the first assignable address in the subnet. 
-
-## FAQ
 
 **How do I start web hosting?** You will need to setup port forwarding, a dynamic DNS, name registration, MySQL, PHP, Apache and take a online course in Javascript. 
 
