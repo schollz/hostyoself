@@ -154,6 +154,7 @@ func (c *client) Run() (err error) {
 			c.Unlock()
 
 			b, _ := json.Marshal(fs)
+			log.Infof("%s sitemap", p.IPAddress)
 			err = ws.Send(wsconn.Payload{
 				Type:    "files",
 				Success: true,
