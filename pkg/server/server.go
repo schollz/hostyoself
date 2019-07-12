@@ -79,7 +79,7 @@ Disallow:`))
 		var b []byte
 		b, err = Asset(r.URL.Path[1:])
 		if err != nil {
-			err = fmt.Errorf("resource '%s' not found",r.URL.Path[1:])
+			err = fmt.Errorf("resource '%s' not found", r.URL.Path[1:])
 			return
 		}
 		var contentType string
@@ -176,11 +176,20 @@ Disallow:`))
 					pathToFile += "/"
 				}
 				pathToFile += "index.html"
+				log.Debugf("trying 2nd try to get: %s", pathToFile)
 				data, err = s.get(domain, pathToFile, ipAddress)
 			}
 			if err != nil {
-				log.Debugf("problem getting: %s", err.Error())
-				return
+				// try one more time
+				if strings.HasSuffix(pathToFile, "/index.html") {
+					pathToFile = strings.TrimSuffix(pathToFile, "/index.html")
+					log.Debugf("trying 3rd try to get: %s", pathToFile)
+					data, err = s.get(domain, pathToFile, ipAddress)
+				}
+				if err != nil {
+					log.Debugf("problem getting: %s", err.Error())
+					return
+				}
 			}
 		}
 

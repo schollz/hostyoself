@@ -62,6 +62,8 @@ Just *kidding*! You don't need any of that crap. Just goto [hostyoself.com](http
 
 **Does this use AI or blockchain?** Sure, why not. 
 
+**Does it scale?** Horizontally, or vertically? Probably neither!
+
 **What inspired this?** [beaker browser](https://beakerbrowser.com/), [ngrok](https://ngrok.com/), [localhost.run](http://localhost.run/), [inlets.dev](https://github.com/alexellis/inlets), Parks and Recreation.
 
 **What's the point of this?** You can host a website! You can share a file! Anything you want, directly from your browser!
