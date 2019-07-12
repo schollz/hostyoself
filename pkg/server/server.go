@@ -189,29 +189,34 @@ Disallow:`))
 					data, err = s.get(domain, pathToFile, ipAddress)
 				}
 				if err != nil {
-					log.Debugf("problem getting: %s", err.Error())
-					// just serve files
-					fs, err = s.getFiles(domain, ipAddress)
-					log.Debugf("fs: %+v", fs)
-					if err != nil {
-						log.Debug(err)
-						return
-					}
+					if pathToFile == "index.html" {
+						// just serve files
+						fs, err = s.getFiles(domain, ipAddress)
+						log.Debugf("fs: %+v", fs)
+						if err != nil {
+							log.Debug(err)
+							return
+						}
 
-					b, _ := Asset("templates/files.html")
-					var t *template.Template
-					t, err = template.New("files").Parse(string(b))
-					if err != nil {
-						log.Error(err)
+						b, _ := Asset("templates/files.html")
+						var t *template.Template
+						t, err = template.New("files").Parse(string(b))
+						if err != nil {
+							log.Error(err)
+							return
+						}
+						return t.Execute(w, struct {
+							Files  []File
+							Domain string
+						}{
+							Domain: domain,
+							Files:  fs,
+						})
+					} else {
+						log.Debugf("problem getting: %s", err.Error())
+						err = fmt.Errorf("not found")
 						return
 					}
-					return t.Execute(w, struct {
-						Files  []File
-						Domain string
-					}{
-						Domain: domain,
-						Files:  fs,
-					})
 				}
 			}
 		}
