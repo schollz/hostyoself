@@ -92,7 +92,15 @@ func host(c *cli.Context) (err error) {
 	if err != nil {
 		return
 	}
-	return cl.Run()
+	for {
+		log.Info("serving forever")
+		err = cl.Run()
+		if err != nil {
+			log.Debug(err)
+		}
+		log.Infof("server disconnected, retrying in 10 seconds")
+		time.Sleep(10 * time.Second)
+	}
 }
 
 func relay(c *cli.Context) (err error) {
