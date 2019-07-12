@@ -11,7 +11,7 @@ alt="Version"></a> </p>
 
 ## See it in action
 
-Here's an example where I use this `hostyoself.com` to host itself. I download the `hostyoself.com` and then host `hostyoself.com` from `hostyoself.com`. This is like the sequel to Inception.
+Here's an example where I use [hostyoself.com](https://hostyoself.com) to host itself. I use `wget` to download [hostyoself.com](https://hostyoself.com) and then host [hostyoself.com](https://hostyoself.com) from [hostyoself.com](https://hostyoself.com). Happy 9th Anniversary [Inception](https://en.wikipedia.org/wiki/Inception) :cake:!
 
 ![Inception](/static/inception.gif)
 
