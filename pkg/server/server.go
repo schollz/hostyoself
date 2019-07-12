@@ -179,7 +179,7 @@ Disallow:`))
 				data, err = s.get(domain, pathToFile, ipAddress)
 			}
 			if err != nil {
-				log.Debug("problem getting: %s", err.Error())
+				log.Debugf("problem getting: %s", err.Error())
 				return
 			}
 		}
