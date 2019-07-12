@@ -11,7 +11,7 @@ alt="Version"></a> </p>
 
 ## See it in action
 
-Here's an example where I use [hostyoself.com](https://hostyoself.com) to host itself. I use `wget` to download [hostyoself.com](https://hostyoself.com) and then host [hostyoself.com](https://hostyoself.com) from [hostyoself.com](https://hostyoself.com). Happy 9th Anniversary [Inception](https://en.wikipedia.org/wiki/Inception) :cake:!
+Here's an example where I use [hostyoself.com](https://hostyoself.com) to host itself. I use `wget` to download [hostyoself.com](https://hostyoself.com) and then host [hostyoself.com](https://hostyoself.com) from [hostyoself.com](https://hostyoself.com): [hostyoself.com/hostyoself/](https://hostyoself.com/hostyoself/). Happy 9th Anniversary [Inception](https://en.wikipedia.org/wiki/Inception) :cake:!
 
 ![Inception](/static/inception.gif)
 
@@ -20,7 +20,6 @@ Here's an example where I use [hostyoself.com](https://hostyoself.com) to host i
 
 Open [hostyoself.com](https://hostyoself.com) and drag and drop a folder, or select a file. Your browser will host the files!
 
-This website can even host itself: https://hostyoself.com/hostyoself/
 
 ## Host from the command line
 
