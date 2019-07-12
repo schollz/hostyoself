@@ -4,7 +4,7 @@
 <br>
 <a
 href="https://github.com/schollz/hostyoself/releases/latest"><img
-src="https://img.shields.io/badge/version-0.0.4-brightgreen.svg?style=flat-square"
+src="https://img.shields.io/badge/version-0.0.5-brightgreen.svg?style=flat-square"
 alt="Version"></a> </p>
 
 <p align="center">A hosting service from the browser, because why not. Try it at <a href="https://hostyoself.com">hostyoself.com</a>.</p>
