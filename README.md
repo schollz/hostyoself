@@ -56,7 +56,7 @@ Just *kidding*! You don't need any of that crap. Just goto [hostyoself.com](http
 
 **Won't I have to reload my browser if I change a file?** Yep! Welcome to the joys of Javascript.
 
-**Whats the largest file I can host using this?** `¯\_(ツ)_/¯`
+**What's the largest file I can host using this?** `¯\_(ツ)_/¯`
 
 **Should I use this to host a website?** Dear god yes.
 
