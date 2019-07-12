@@ -1,6 +1,7 @@
 package client
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -10,6 +11,7 @@ import (
 	"sync"
 
 	"github.com/schollz/hostyoself/pkg/namesgenerator"
+	"github.com/schollz/hostyoself/pkg/server"
 	"github.com/schollz/hostyoself/pkg/utils"
 	"github.com/schollz/hostyoself/pkg/wsconn"
 
@@ -134,6 +136,30 @@ func (c *client) Run() (err error) {
 				})
 				log.Infof("%s /%s 200", p.IPAddress, p.Message)
 			}
+		} else if p.Type == "files" {
+			c.Lock()
+			fs := make([]server.File, len(c.fileList))
+			i := 0
+			for n := range c.fileList {
+				fs[i] = server.File{
+					FullPath: n,
+					Upload: server.Upload{
+						UUID:     "",
+						Total:    0,
+						Filename: "",
+					},
+				}
+				i++
+			}
+			c.Unlock()
+
+			b, _ := json.Marshal(fs)
+			err = ws.Send(wsconn.Payload{
+				Type:    "files",
+				Success: true,
+				Message: string(b),
+				Key:     c.Key,
+			})
 		}
 		if err != nil {
 			log.Debug(err)
@@ -195,6 +221,7 @@ func (c *client) watchFileSystem() (err error) {
 		} else {
 			ppath, _ = filepath.Abs(ppath)
 			ppath = strings.TrimPrefix(filepath.ToSlash(ppath), c.Folder+"/")
+			log.Debugf("%s", ppath)
 			c.Lock()
 			c.fileList[ppath] = struct{}{}
 			c.Unlock()
