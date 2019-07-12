@@ -129,6 +129,9 @@ const socketMessageListener = (event) => {
                 success: true,
                 key: document.getElementById("inputKey").value,
             });
+            consoleLog(
+                `${data.ip} [${(new Date()).toUTCString()}] sitemap 200`
+            );
         } else {
             socketSend({
                 type: "files",
@@ -136,6 +139,9 @@ const socketMessageListener = (event) => {
                 success: false,
                 key: document.getElementById("inputKey").value,
             });
+            consoleLog(
+                `${data.ip} [${(new Date()).toUTCString()}] sitemap 404`
+            );
         }
     } else if (data.type == "get") {
         var foundFile = false
