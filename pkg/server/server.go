@@ -79,7 +79,7 @@ Disallow:`))
 		var b []byte
 		b, err = Asset(r.URL.Path[1:])
 		if err != nil {
-			http.Error(w, "file not found", 404)
+			err = fmt.Errorf("resource '%s' not found",r.URL.Path[1:])
 			return
 		}
 		var contentType string
