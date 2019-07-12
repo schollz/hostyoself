@@ -232,7 +232,8 @@ func (s *server) handleWebsocket(w http.ResponseWriter, r *http.Request) (err er
 	// handle websockets on this page
 	c, errUpgrade := wsupgrader.Upgrade(w, r, nil)
 	if errUpgrade != nil {
-		return errUpgrade
+		log.Error(errUpgrade)
+		return nil
 	}
 	ws := wsconn.New(c)
 
@@ -250,7 +251,7 @@ func (s *server) handleWebsocket(w http.ResponseWriter, r *http.Request) (err er
 		err = fmt.Errorf("got wrong type/domain: %s/%s", p.Type, p.Message)
 		log.Debug(err)
 		ws.Close()
-		return
+		return nil
 	}
 
 	domain := strings.Replace(strings.ToLower(strings.TrimSpace(p.Message)), " ", "-", -1)
@@ -276,7 +277,10 @@ func (s *server) handleWebsocket(w http.ResponseWriter, r *http.Request) (err er
 		Message: domain,
 		Success: true,
 	})
-	return
+	if err != nil {
+		log.Error(err)
+	}
+	return nil
 }
 
 func (s *server) isdomain(domain string) bool {
