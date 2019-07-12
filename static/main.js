@@ -164,6 +164,14 @@ const socketMessageListener = (event) => {
 };
 const socketOpenListener = (event) => {
     consoleLog('[info] connected');
+    if (isConnected == true) {
+        // reconnect if was connected and got disconnected
+        socketSend({
+            type: "domain",
+            message: document.getElementById("inputDomain").value,
+            key: document.getElementById("inputKey").value,
+        })
+    }
 };
 
 const socketCloseListener = (event) => {
