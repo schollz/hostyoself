@@ -125,8 +125,9 @@ const socketMessageListener = (event) => {
         var foundFile = false
         var iToSend = 0
         for (i = 0; i < files.length; i++) {
-            if (files[i].webkitRelativePath == data.message || files[i].name == data.message || files[i]
-                .webkitRelativePath == relativeDirectory + "/" + data.message) {
+            if (files[i].webkitRelativePath == data.message || files[i].fullPath == data.message || files[i].name == data.message || files[i]
+                .webkitRelativePath == relativeDirectory + "/" + data.message || files[i]
+                .fullPath == relativeDirectory + "/" + data.message) {
                 iToSend = i;
                 var reader = new FileReader();
                 reader.onload = function(theFile) {
