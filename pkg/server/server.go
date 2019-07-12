@@ -1,6 +1,7 @@
 package server
 
 import (
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"math/rand"
@@ -168,6 +169,7 @@ Disallow:`))
 
 		// send GET request to websockets
 		var data string
+		var fs []File
 		data, err = s.get(domain, pathToFile, ipAddress)
 		if err != nil {
 			// try index.html if it doesn't exist
@@ -188,7 +190,28 @@ Disallow:`))
 				}
 				if err != nil {
 					log.Debugf("problem getting: %s", err.Error())
-					return
+					// just serve files
+					fs, err = s.getFiles(domain, ipAddress)
+					log.Debugf("fs: %+v", fs)
+					if err != nil {
+						log.Debug(err)
+						return
+					}
+
+					b, _ := Asset("templates/files.html")
+					var t *template.Template
+					t, err = template.New("files").Parse(string(b))
+					if err != nil {
+						log.Error(err)
+						return
+					}
+					return t.Execute(w, struct {
+						Files  []File
+						Domain string
+					}{
+						Domain: domain,
+						Files:  fs,
+					})
 				}
 			}
 		}
@@ -297,6 +320,69 @@ func (s *server) isdomain(domain string) bool {
 	_, ok := s.conn[domain]
 	s.Unlock()
 	return ok
+}
+
+type File struct {
+	FullPath string `json:"fullPath"`
+	Upload   Upload `json:"upload"`
+}
+type Upload struct {
+	UUID     string `json:"uuid"`
+	Total    int    `json:"total"`
+	Filename string `json:"filename"`
+}
+
+func (s *server) getFiles(domain, ipAddress string) (fs []File, err error) {
+	var connections []*connection
+	s.Lock()
+	if _, ok := s.conn[domain]; ok {
+		connections = s.conn[domain]
+	}
+	s.Unlock()
+	if connections == nil || len(connections) == 0 {
+		err = fmt.Errorf("no connections available for domain %s", domain)
+		log.Debug(err)
+		return
+	}
+	log.Debugf("requesting files of %s from %d connections", domain, len(connections))
+
+	// any connection that initated with this key is viable
+	key := connections[0].Key
+
+	// loop through connections randomly and try to get one to serve the file
+	for _, i := range rand.Perm(len(connections)) {
+		var p wsconn.Payload
+		p, err = func() (p wsconn.Payload, err error) {
+			err = connections[i].ws.Send(wsconn.Payload{
+				Type:      "files",
+				Message:   "all",
+				IPAddress: ipAddress,
+			})
+			if err != nil {
+				return
+			}
+			p, err = connections[i].ws.Receive()
+			return
+		}()
+		if err != nil {
+			log.Debug(err)
+			s.dumpConnection(domain, connections[i].ID)
+			continue
+		}
+		log.Tracef("recv: %+v", p)
+		if p.Type == "files" && p.Key == key {
+			if !p.Success {
+				err = fmt.Errorf(p.Message)
+				return
+			}
+
+			err = json.Unmarshal([]byte(p.Message), &fs)
+			return
+		}
+		log.Debugf("no good data from %d", i)
+	}
+	err = fmt.Errorf("invalid response")
+	return
 }
 
 func (s *server) get(domain, filePath, ipAddress string) (payload string, err error) {

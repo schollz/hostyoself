@@ -121,7 +121,23 @@ const socketMessageListener = (event) => {
     }
     console.log(data)
     consoleLog(`[debug] ${data.message}`)
-    if (data.type == "get") {
+    if (data.type == "files") {
+        if (files.length > 0) {
+            socketSend({
+                type: "files",
+                message: JSON.stringify(files),
+                success: true,
+                key: document.getElementById("inputKey").value,
+            });
+        } else {
+            socketSend({
+                type: "files",
+                message: "none found",
+                success: false,
+                key: document.getElementById("inputKey").value,
+            });
+        }
+    } else if (data.type == "get") {
         var foundFile = false
         var iToSend = 0
         for (i = 0; i < files.length; i++) {

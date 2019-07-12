@@ -1,0 +1,20 @@
+<html>
+
+<head>
+</head>
+
+<body>
+    <ul>
+        {{range .Files}}
+        <li>
+            {{ if .FullPath }}
+            <a href="/{{$.Domain}}/{{.FullPath}}">{{.FullPath}}</a>
+            {{else}}
+            <a href="/{{$.Domain}}/{{.Upload.Filename}}">{{.Upload.Filename}}</a>
+            {{end}}
+        </li>
+        {{end}}
+    </ul>
+</body>
+
+</html>
