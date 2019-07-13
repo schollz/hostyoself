@@ -32,6 +32,11 @@ https://hostyoself.com/confidentcat/
 
 Now if you have a file in your folder `README.md` you can access it with the public URL `https://hostyoself.com/confidentcat/README.md`, directly from your computer!
 
+If you're on a Mac, you can install with Homebrew:
+```
+brew tap schollz/homebrew https://github.com/schollz/homebrew-tap.git
+brew install hostyoself
+```
 
 ## Run your own relay
 
