@@ -48,15 +48,23 @@ var filesize = 0;
 
     drop.on('addedfile', function(file) {
         // console.log(file);
-        var domain = document.getElementById("inputDomain").value
+        var domain = document.getElementById("inputDomain").value;
         files.push(file);
-        if (file.hasOwnProperty("webkitRelativePath")) {
-            if (files.length == 1) {
+        if ("webkitRelativePath" in file) {
+            if (files.length == 1 && file.webkitRelativePath != "") {
                 relativeDirectory = file.webkitRelativePath.split("/")[0];
             } else if (file.webkitRelativePath.split("/")[0] != relativeDirectory) {
                 relativeDirectory = "";
             }
         }
+        if ("fullPath" in file) {
+            if (files.length == 1 && file.fullPath != "") {
+                relativeDirectory = file.fullPath.split("/")[0];
+            } else if (file.fullPath.split("/")[0] != relativeDirectory) {
+                relativeDirectory = "";
+            }
+        }
+
 
 
         if (!(isConnected)) {
