@@ -50,11 +50,14 @@ var filesize = 0;
         // console.log(file);
         var domain = document.getElementById("inputDomain").value
         files.push(file);
-        if (files.length == 1) {
-            relativeDirectory = file.webkitRelativePath.split("/")[0];
-        } else if (file.webkitRelativePath.split("/")[0] != relativeDirectory) {
-            relativeDirectory = "";
+        if (file.hasOwnProperty("webkitRelativePath")) {
+            if (files.length == 1) {
+                relativeDirectory = file.webkitRelativePath.split("/")[0];
+            } else if (file.webkitRelativePath.split("/")[0] != relativeDirectory) {
+                relativeDirectory = "";
+            }
         }
+
 
         if (!(isConnected)) {
             isConnected = true;
