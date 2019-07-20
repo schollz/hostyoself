@@ -34,7 +34,7 @@ func main() {
 	app.Version = Version
 	app.Compiled = time.Now()
 	app.Usage = "host your files using websockets from the command line or a browser"
-	app.UsageText = "use to transfer files or host a impromptu website"
+	app.UsageText = "use to transfer files or host an impromptu website"
 	app.Commands = []cli.Command{
 		{
 			Name:        "relay",
