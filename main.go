@@ -14,7 +14,7 @@ import (
 	"github.com/schollz/hostyoself/pkg/client"
 	"github.com/schollz/hostyoself/pkg/server"
 	log "github.com/schollz/logger"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
 func init() {
@@ -35,19 +35,17 @@ func main() {
 	app.Compiled = time.Now()
 	app.Usage = "host your files using websockets from the command line or a browser"
 	app.UsageText = "use to transfer files or host an impromptu website"
-	app.Commands = []cli.Command{
+	app.Commands = []*cli.Command{
 		{
 			Name:        "relay",
 			Usage:       "start a relay",
 			Description: "relay is used to transit files",
 			Flags: []cli.Flag{
-				cli.StringFlag{Name: "url, u", Value: "localhost", Usage: "public URL to use"},
-				cli.StringFlag{Name: "port", Value: "8010", Usage: "ports of the local relay"},
+				&cli.StringFlag{Name: "url", Aliases: []string{"u"}, Value: "localhost", Usage: "public URL to use"},
+				&cli.StringFlag{Name: "port", Aliases: []string{"p"}, Value: "8010", Usage: "ports of the local relay"},
 			},
 			HelpName: "hostyoself relay",
-			Action: func(c *cli.Context) error {
-				return relay(c)
-			},
+			Action: relay,
 		},
 		{
 			Name:        "host",
@@ -55,18 +53,16 @@ func main() {
 			Description: "host files from your computer",
 			HelpName:    "hostyoself relay",
 			Flags: []cli.Flag{
-				cli.StringFlag{Name: "url, u", Value: "https://hostyoself.com", Usage: "URL of relay to connect"},
-				cli.StringFlag{Name: "domain, d", Value: "", Usage: "domain to use (default is random)"},
-				cli.StringFlag{Name: "key, k", Value: "", Usage: "key value to use (default is random)"},
-				cli.StringFlag{Name: "folder, f", Value: ".", Usage: "folder to serve files"},
+				&cli.StringFlag{Name: "url", Aliases: []string{"u"}, Value: "https://hostyoself.com", Usage: "URL of relay to connect"},
+				&cli.StringFlag{Name: "domain", Aliases: []string{"d"}, Usage: "domain to use (default is random)"},
+				&cli.StringFlag{Name: "key", Aliases: []string{"k"}, Usage: "key value to use (default is random)"},
+				&cli.StringFlag{Name: "folder", Aliases: []string{"f"}, Value: ".", Usage: "folder to serve files"},
 			},
-			Action: func(c *cli.Context) error {
-				return host(c)
-			},
+			Action: host,
 		},
 	}
 	app.Flags = []cli.Flag{
-		cli.BoolFlag{Name: "debug", Usage: "increase verbosity"},
+		&cli.BoolFlag{Name: "debug", Usage: "increase verbosity"},
 	}
 	app.EnableBashCompletion = true
 	app.HideHelp = false
@@ -82,7 +78,7 @@ func main() {
 }
 
 func host(c *cli.Context) (err error) {
-	if c.GlobalBool("debug") {
+	if c.Bool("debug") {
 		log.SetLevel("debug")
 	} else {
 		log.SetLevel("info")
@@ -104,7 +100,7 @@ func host(c *cli.Context) (err error) {
 }
 
 func relay(c *cli.Context) (err error) {
-	if c.GlobalBool("debug") {
+	if c.Bool("debug") {
 		log.SetLevel("debug")
 	} else {
 		log.SetLevel("info")
