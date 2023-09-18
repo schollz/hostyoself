@@ -85,6 +85,7 @@ Just *kidding*! You don't need any of that crap. Just goto [hostyoself.com](http
 ```
 $ git clone https://github.com/schollz/hostyoself
 $ cd hostyoself
+$ go install -a -v github.com/go-bindata/go-bindata/...@latest
 $ go generate -v -x
 $ go build -v
 ```
